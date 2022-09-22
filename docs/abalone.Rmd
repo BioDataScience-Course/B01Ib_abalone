@@ -22,7 +22,7 @@ SciViews::R("model", lang = "fr")
 
 <!--# Introduction et but ont été réduits à leur plus simple expression en une seule phrase, mais normalement cette section est plus détaillée (ce n'est pas le but de l'exercice ici) ! -->
 
-L'étude globale souhaite modéliser l'age des ormeaux sur base de mesures morphologiques. Ce carnet de notes s'intéresse à l'évolution de la masse en fonction de la longueur de la coquille.
+L'étude globale souhaite modéliser l'age des ormeaux sur base de mesures morphologiques. Ce carnet de notes s'intéresse à l'évolution de la masse en fonction de la longueur de la coquille comme analyse préliminaire.
 
 ## Résultats
 
