@@ -8,4 +8,5 @@ library(parsermd)
 #SciViews::R(lang = "fr", silent = TRUE)
 
 source("test_functions.R")
-test_dir("testthat", reporter = LocationReporter)
+
+test_dir("testthat", reporter = sddReporter)

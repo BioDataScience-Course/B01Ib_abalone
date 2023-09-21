@@ -1,7 +1,6 @@
 # Vérifications de doc/abalone_notebook.qmd
 
-test_that("
-  Le bloc-notes est-il compilé un fichier final HTML ?", {
+test_that("Le bloc-notes est-il compilé en un fichier final HTML ?", {
   expect_true(file.exists("../../abalone_notebook.html"))
   expect_true(file.exists("../../abalone_notebook.html") &&
       file.mtime("../../abalone_notebook.html") >=
