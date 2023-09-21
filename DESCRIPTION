@@ -1,0 +1,19 @@
+Package: B01Ib_abalone
+Type: Package
+Version: 2.0.0
+Title: Morphologie d'ormeaux
+Description: Projet individuel cadré du module 1 du cours SDD II à l'UMONS
+Authors@R: c(
+  person("Guyliann", "Engels", role = "aut",
+    email = "guyliann.engels@umons.ac.be"),
+  person("Philippe", "Grosjean", role = c("aut", "cre"),
+    email = "phgrosjean@sciviews.org",
+    comment = c(ORCID = "0000-0002-2694-9471"))
+  )
+Depends: R (>= 4.2.3)
+SystemRequirements: SciViews Box 2023 (https://www.sciviews.org/software/svbox2023/)
+License: MIT
+URL: https://github.com/BioDataScience-Course/B01Ib_abalone
+BugReports: https://github.com/BioDataScience-Course/B01Ib_abalone/issues
+Encoding: UTF-8
+Language: fr-FR

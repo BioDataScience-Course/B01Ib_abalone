@@ -2,8 +2,13 @@
 title: "___"
 author: "___"
 date: "`r Sys.Date()`"
-output:
-  html_document: default
+format:
+  html:
+    code-fold: true
+    code-tools: true
+    toc: true
+editor: visual
+lang: fr
 ---
 
 <!--# Ceci est un commentaire. -->
@@ -13,7 +18,6 @@ output:
 <!--% Ajoutez un titre et votre nom dans l'entête YAML.-->
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
 SciViews::R("model", lang = "fr")
 ```
 
@@ -68,7 +72,7 @@ chart(___)
 
 $$___equation___$$
 
-<!--% Faites un résumé de votre modèle avec la fonction `summary()` appliquée sur votre objet `abalone_lm`.-->
+<!--% Faites un résumé de votre modèle avec la fonction `summary()` appliquée sur votre objet `abalone_lm` et affichez-le grâce à `tabularise()`.-->
 
 ```{r summary}
 
