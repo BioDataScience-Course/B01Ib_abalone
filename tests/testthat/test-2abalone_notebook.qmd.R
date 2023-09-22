@@ -1,10 +1,8 @@
-# Vérifications de doc/abalone_notebook.qmd
+# Vérifications de abalone_notebook.qmd
 
 test_that("Le bloc-notes est-il compilé en un fichier final HTML ?", {
-  expect_true(file.exists("../../abalone_notebook.html"))
-  expect_true(file.exists("../../abalone_notebook.html") &&
-      file.mtime("../../abalone_notebook.html") >=
-      file.mtime("../../abalone_notebook.qmd"))
+  expect_true(is_rendered("abalone_notebook.qmd"))
+  expect_true(is_rendered_current("abalone_notebook.qmd"))
 
   # Ces tests vérifient la présence du fichier HTML dans une version
   # correspondante à la dernière version du document Quarto source. Vous devez

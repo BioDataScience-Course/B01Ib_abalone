@@ -15,7 +15,7 @@ LaTeX: XeLaTeX
 AutoAppendNewline: Yes
 StripTrailingWhitespace: Yes
 
-BuildType: Custom
-CustomScriptPath: tests/tests.sh
+BuildType: Makefile
+MakefilePath: tests
 
 SpellingDictionary: fr_FR
