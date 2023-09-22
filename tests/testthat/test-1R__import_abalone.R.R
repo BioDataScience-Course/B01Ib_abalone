@@ -2,8 +2,8 @@
 
 test_that("Importation des données depuis Internet", {
 
-    expect_true(is_dataframe("abalone"))
-    # Le jeu de données `abalone` est introuvable après l'étape 1.
-    # Avez-vous corrigé les erreurs dans le code ?
-    # Avez-vous exécuté le code de ce script R ?
+    expect_true(is_data_df("abalone"))
+    # Le jeu de données `abalone` est introuvable.
+    # Avez-vous corrigé les erreurs dans le code du script ?
+    # Avez-vous exécuté le code de ce script R en entièreté ?
   })

@@ -2,17 +2,18 @@
 
 test_that("Le bloc-notes est-il compilé en un fichier final HTML ?", {
   expect_true(is_rendered("abalone_notebook.qmd"))
-  expect_true(is_rendered_current("abalone_notebook.qmd"))
-
-  # Ces tests vérifient la présence du fichier HTML dans une version
-  # correspondante à la dernière version du document Quarto source. Vous devez
-  # compiler abalone_notebook.qmd après toute modification, et cette
-  # compilation doit s'être réalisée sans erreur pour que ce test réussisse
-  # (vous devez voir le fichier HTML résultant dans l'onglet Visualisateur à la
-  # fin de la compilation).
-  # En cas d'erreur, lisez le message qui s'affiche dans l'onglet Travaux et
-  # corrigez ce qui ne va pas dans votre document avant de le compiler à
-  # nouveau.
+  # La version compilée HTML du rapport est introuvable
+  # Vous devez créer un rendu de votre bloc-notes Quarto (bouton 'Rendu')
+  # Vérifiez aussi que ce rendu se réalise sans erreur, sinon, lisez le message
+  # qui s'affiche dans l'onglet 'Travaux' et corrigez ce qui ne va pas dans
+  # votre document avant de réaliser à nouveau un rendu HTML.
   # IL EST TRES IMPORTANT QUE VOTRE DOCUMENT COMPILE ! C'est tout de même le but
   # de votre analyse que d'obtenir le document final HTML.
+
+  expect_true(is_rendered_current("abalone_notebook.qmd"))
+  # La version compilée HTML du document Quarto existe, mais elle est ancienne
+  # Vous avez modifié le document Quarto après avoir réalisé le rendu.
+  # La version finale HTML n'est sans doute pas à jour. Recompilez la dernière
+  # version de votre bloc-notes en cliquant sur le bouton 'Rendu' et vérifiez
+  # que la conversion se fait sans erreur. Sinon, corrigez et regénérez le HTML.
 })

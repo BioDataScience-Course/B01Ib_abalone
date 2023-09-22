@@ -24,66 +24,68 @@ digest <- function(object, algo = "md5", ...) {
 res_dir <- here::here("tests", "results")
 
 # Read and write results
-read_res <- function(name, ..., res_dir = res_dir,
+read_res <- function(name, ..., dir = res_dir,
     nthreads = parallel::detectCores(logical = FALSE)) {
-  qs::qread(fs::path(res_dir, name), nthreads = nthreads, ...)
+  qs::qread(fs::path(dir, name), nthreads = nthreads, ...)
 }
 
-write_res <- function(object, name, ..., res_dir = res_dir,
+write_res <- function(object, name, ..., dir = res_dir,
     nthreads = parallel::detectCores(logical = FALSE)) {
-  qs::qsave(object, file = fs::path(res_dir, name), nthreads = nthreads, ...)
+  qs::qsave(object, file = fs::path(dir, name), nthreads = nthreads, ...)
 }
 
 # The main function to put a result in /tests/results
-record_res <- function(object = ".Last.value", name = object, fun = NULL, ...,
-    dir = res_dir) {
+record_res <- function(object_name = ".Last.value", name = object_name,
+    fun = NULL, ..., dir = res_dir) {
   file <- fs::path(dir, name)
 
-  data <- get0(object)
+  data <- get0(object_name)
   if (is.null(data))
     return(invisible(FALSE))
 
   if (!is.null(fun))
     data <- try(fun(data, ...), silent = TRUE)
 
-  data.io::write$rds(data, file)
+  write_res(data, name = name, dir = dir)
   invisible(TRUE)
 }
 
 # Shortcuts
 RO <- record_res
 
-RN <- function(name, object = ".Last.value", fun = NULL, ...)
-  record_res(object = object, name = name, fun = fun, ...)
+RN <- function(name, object_name = ".Last.value", fun = NULL, ...)
+  record_res(object = object_name, name = name, fun = fun, ...)
 
-RODFS <- function(object = ".Last.value", name = object, fun = df_structure)
-  record_res(object = object, name = name, fun = fun, ...)
+RODFS <- function(object_name = ".Last.value", name = object_name,
+    fun = df_structure, ...)
+  record_res(object_name = object_name, name = name, fun = fun, ...)
 
-RNDFS <- function(name, object = ".Last.value", fun = df_structure, ...)
-  record_res(object = object, name = name, fun = fun, ...)
+RNDFS <- function(name, object_name = ".Last.value", fun = df_structure, ...)
+  record_res(object_name = object_name, name = name, fun = fun, ...)
 
-ROMD5 <- function(object = ".Last.value", name = object, fun = digest)
-  record_res(object = object, name = name, fun = fun, ...)
+ROMD5 <- function(object_name = ".Last.value", name = object_name, fun = digest,
+    ...)
+  record_res(object_name = object_name, name = name, fun = fun, ...)
 
-RNMD5 <- function(name, object = ".Last.value", fun = digest, ...)
-  record_res(object = object, name = name, fun = fun, ...)
+RNMD5 <- function(name, object_name = ".Last.value", fun = digest, ...)
+  record_res(object_name = object_name, name = name, fun = fun, ...)
 
 
 # Set and get references --------------------------------------------------
 
 ref_dir <- here::here("tests", "reference")
 
-set_ref <- function(name, ..., res_dir = res_dir, ref_dir = ref_dir,
+set_ref <- function(name, ..., dir1 = res_dir, dir2 = ref_dir,
     nthreads = parallel::detectCores(logical = FALSE)) {
-  res <- read_res(name, ..., dir = res_dir, nthreads = nthreads)
-  res <- qs::qserialise(res, preset = "archive")
+  res <- read_res(name, ..., dir = dir1, nthreads = nthreads)
+  res <- qs::qserialize(res, preset = "archive")
   res <- qs::base85_encode(res)
-  qs::qsave(res, file = fs::path(ref_dir, name), nthreads = nthreads, ...)
+  qs::qsave(res, file = fs::path(dir2, name), nthreads = nthreads, ...)
 }
 
-get_ref <- function(name, ..., ref_dir = ref_dir,
+get_ref <- function(name, ..., dir = ref_dir,
     nthreads = parallel::detectCores(logical = FALSE)) {
-  res <- qs::qread(fs::path(ref_dir, name), nthreads = nthreads, ...)
+  res <- qs::qread(fs::path(dir, name), nthreads = nthreads, ...)
   res <- qs::base85_decode(res)
   qs::qdeserialize(res)
 }
@@ -108,26 +110,26 @@ is_rendered_current <- function(quarto, format = "html") {
 }
 
 # A data file exists and contains a data.frame
-is_data <- function(data, dir = "data", format = "rds", check_df = FALSE) {
-  data_path <- here::here(dir, paste(data, format, sep = "."))
+is_data <- function(name, dir = "data", format = "rds", check_df = FALSE) {
+  data_path <- here::here(dir, paste(name, format, sep = "."))
   res <- fs::file_exists(data_path)
   if (!res)
-    return(structure(FALSE, message = "The data file ", data_path,
-      " is not found."))
+    return(structure(FALSE, message = paste0("The data file ", data_path,
+      " is not found.")))
   res <- try(data.io::read(data_path, type = format), silent = TRUE)
   if (inherits(res, "try-error"))
     return(structure(FALSE, message = res))
 
   if (isTRUE(check_df) && !inherits(res, "data.frame"))
-    return(structure(FALSE, message = "The data file ", data_path,
-      " is found but it does not contains a data frame."))
+    return(structure(FALSE, message = paste0("The data file ", data_path,
+      " is found but it does not contains a data frame.")))
 
   # Everything is OK
   TRUE
 }
 
-is_dataframe <- function(data, dir = "data", format = "rds", check_df = TRUE)
-  is_data(data, dir = dir, format = format, check_df = check_df)
+is_data_df <- function(name, dir = "data", format = "rds", check_df = TRUE)
+  is_data(name, dir = dir, format = format, check_df = check_df)
 
 
 # Tests reporter ----------------------------------------------------------
