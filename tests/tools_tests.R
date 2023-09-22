@@ -8,10 +8,19 @@
 df_structure <- function(object, ...) {
   list(
     names = names(object),
+    labels = lapply(object, function(x) {
+      res <- attr(x, "label")
+      if (is.null(res) || is.na(res)) "" else as.character(res)
+    }),
+    units = lapply(object, function(x) {
+      res <- attr(x, "units")
+      if (is.null(res) || is.na(res)) "" else as.character(res)
+    }),
     nrow = nrow(object),
     ncol = ncol(object),
     classes = sapply(object, function(x) class(x)[1]),
-    nas = sapply(object, function(x) sum(is.na(x)))
+    nas = sapply(object, function(x) sum(is.na(x))),
+    comment = comment(object)
   )
 }
 
@@ -75,7 +84,8 @@ RNMD5 <- function(name, object_name = ".Last.value", fun = digest, ...)
 
 ref_dir <- here::here("tests", "reference")
 
-set_ref <- function(name, ..., dir1 = res_dir, dir2 = ref_dir,
+# We don't use write_ref() because the mechanism is different!
+make_ref <- function(name, ..., dir1 = res_dir, dir2 = ref_dir,
     nthreads = parallel::detectCores(logical = FALSE)) {
   res <- read_res(name, ..., dir = dir1, nthreads = nthreads)
   res <- qs::qserialize(res, preset = "archive")
@@ -83,11 +93,68 @@ set_ref <- function(name, ..., dir1 = res_dir, dir2 = ref_dir,
   qs::qsave(res, file = fs::path(dir2, name), nthreads = nthreads, ...)
 }
 
-get_ref <- function(name, ..., dir = ref_dir,
+read_ref <- function(name, ..., dir = ref_dir,
     nthreads = parallel::detectCores(logical = FALSE)) {
   res <- qs::qread(fs::path(dir, name), nthreads = nthreads, ...)
   res <- qs::base85_decode(res)
   qs::qdeserialize(res)
+}
+
+set_key <- function() {
+  # Try first to retrieve it from a file
+  key_file <- here::here("tests/results/key")
+  if (fs::file_exists(key_file))
+    return(qs::qread(key_file))
+  pass <- rstudioapi::askForPassword()
+  if (is.null(pass)) # User cancelled
+    return()
+  if (digest::digest(pass) != "cfe7383614aacd5035642bf60d7d1a3e")
+    stop("Invalid password")
+  key <- charToRaw(pass) |> openssl::md5()
+  class(key) <- c("aes", "raw")
+  # Save this key
+  qs::qsave(key, file = key_file)
+  invisible(key)
+}
+
+make_original <- function(file, dir = ref_dir) {
+  ref_file <- fs::path(dir, file)
+  ref_file <- here::here(ref_file)
+  file <- here::here(file)
+  if (!fs::file_exists(file))
+    stop("File not found")
+  fs::file_copy(file, ref_file, overwrite = TRUE)
+}
+
+read_original <- function(file, dir = ref_dir) {
+  ref_file <- fs::path(dir, file)
+  ref_file <- here::here(ref_file)
+  file <- here::here(file)
+  if (!fs::file_exists(ref_file))
+    stop("Reference file not found")
+  fs::file_copy(ref_file, file, overwrite = TRUE)
+}
+
+make_solution <- function(file, dir = ref_dir, key = NULL) {
+  ref_file <- fs::path(dir, paste0(file, ".solution"))
+  ref_file <- here::here(ref_file)
+  file <- here::here(file)
+  if (!fs::file_exists(file))
+    stop("File not found")
+  if (is.null(key))
+    key <- set_key()
+  cyphr::encrypt_file(file, key = cyphr::key_openssl(key), dest = ref_file)
+}
+
+read_solution <- function(file, dir = ref_dir, key = NULL) {
+  ref_file <- fs::path(dir, paste0(file, ".solution"))
+  ref_file <- here::here(ref_file)
+  file <- here::here(file)
+  if (!fs::file_exists(ref_file))
+    stop("Reference file not found")
+  if (is.null(key))
+    key <- set_key()
+  cyphr::decrypt_file(ref_file, key = cyphr::key_openssl(key), dest = file)
 }
 
 
@@ -130,6 +197,72 @@ is_data <- function(name, dir = "data", format = "rds", check_df = FALSE) {
 
 is_data_df <- function(name, dir = "data", format = "rds", check_df = TRUE)
   is_data(name, dir = dir, format = format, check_df = check_df)
+
+is_identical_to_ref <- function(name, part = NULL, attr = NULL) {
+  ref <- read_ref(name) # Note: generate an error if the object does not exist
+  res <- read_res(name) # Idem
+
+  if (!is.null(part)) {
+    ref <- ref[[part]]
+    res <- res[[part]]
+  }
+
+  if (!is.null(attr)) {
+    ref <- attr(ref, attr)
+    res <- attr(res, attr)
+  }
+
+  # Items cannot be NULL
+  if (is.null(res) && is.null(ref))
+    structure(FALSE, message = "Both res and ref are NULL")
+
+  identical(res, ref)
+}
+
+is_equal_to_ref <- function(name, part = NULL, attr = NULL) {
+  ref <- read_ref(name) # Note: generate an error if the object does not exist
+  res <- read_res(name) # Idem
+
+  if (!is.null(part)) {
+    ref <- ref[[part]]
+    res <- res[[part]]
+  }
+
+  if (!is.null(attr)) {
+    ref <- attr(ref, attr)
+    res <- attr(res, attr)
+  }
+
+  # Items cannot be NULL
+  if (is.null(res) && is.null(ref))
+    structure(FALSE, message = "Both res and ref are NULL")
+
+  all.equal(res, ref)
+}
+
+has_labels_all <- function(name, part = NULL) {
+  res <- read_res(name)$labels
+  res <- sapply(res, nchar) > 0
+  all(res, na.rm = TRUE)
+}
+
+has_labels_any <- function(name, part = NULL) {
+  res <- read_res(name)$labels
+  res <- sapply(res, nchar) > 0
+  any(res, na.rm = TRUE)
+}
+
+has_units_all <- function(name, part = NULL) {
+  res <- read_res(name)$units
+  res <- sapply(res, nchar) > 0
+  all(res, na.rm = TRUE)
+}
+
+has_units_any <- function(name, part = NULL) {
+  res <- read_res(name)$units
+  res <- sapply(res, nchar) > 0
+  any(res, na.rm = TRUE)
+}
 
 
 # Tests reporter ----------------------------------------------------------

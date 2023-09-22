@@ -8,20 +8,26 @@ clean :
 	echo "✔︎ Nettoyage terminé !"
 
 reset :
-	echo "TODO: Préparation pour la distribution du dépôt..."
-	# Effacement des fichiers du sous-dossier results, sauf README.md
+	echo "Préparation pour la distribution du dépôt..."
+	echo "  • Élimination du cache des données..."
+	rm -f ../data/abalone.rds
+	rm -f ../data/data_raw/abalone_raw.csv
+	echo "  • Remplacement des fichiers de travail par les originaux..."
+	Rscript -e "source('tools_tests.R'); read_original('R/import_abalone.R'); read_original('abalone_notebook.qmd')"
+	echo "  • Élimination des version compilées des documents Quarto..."
+	rm -f ../abalone_notebook.html
+	echo "  • Effacement des objets créés pour les tests..."
 	find results/ -type f -not -name 'README.md' -delete
-	# Remplacer les fichiers travaillés par leur version vierge
-
-	sleep 2
 	echo "✔︎ Préparation terminée !"
 
 solution :
-	echo "TODO: Configuration du dépôt avec la solution..."
-	echo "  • Récupération du mot de passe..."
-	sleep 2
-	# Effacement des fichiers du sous-dossier results, sauf README.md
+	echo "Configuration du dépôt avec la solution..."
+	echo "  • Vérification du mot de passe..."
+	if [ ! -e "results/key" ]; then echo "✗ Exécution interrompue : mot de passe introuvable !" && exit 1; fi
+	echo "  • Remplacement des fichiers de travail par les solutions..."
+	Rscript -e "source('tools_tests.R'); read_solution('R/import_abalone.R'); read_solution('abalone_notebook.qmd')"
+	echo "  • Élimination des version compilées des documents Quarto..."
+	rm -f ../abalone_notebook.html
+	echo "  • Effacement des objets créés pour les tests..."
 	find results/ -type f -not -name 'README.md' -delete
-	# Remplacer les fichiers de travail par la solution
-
-	echo "✗ Exécution interrompue : mot de passe introuvable !"
+	echo "✔︎ Préparation terminée !"
