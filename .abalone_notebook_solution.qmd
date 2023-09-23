@@ -1,0 +1,119 @@
+---
+title: "___"
+author: "___"
+date: "`r Sys.Date()`"
+format:
+  html:
+    code-fold: true
+    code-tools: true
+    toc: true
+editor: visual
+lang: fr
+---
+
+<!--# Ceci est un commentaire. -->
+
+<!--% Ceci est une consigne. Ne jamais modifier ni déplacer les consignes dans le document ! -->
+
+<!--% Ajoutez un titre et votre nom dans l'entête YAML.-->
+
+```{r setup, include=FALSE}
+if (!"tools:tests" %in% search())
+  source(here::here("tests/tools_tests.R"), attach(NULL, name = "tools:tests"))
+SciViews::R("model", lang = "fr")
+```
+
+## Introduction et but
+
+<!--# Introduction et but ont été réduits à leur plus simple expression en une seule phrase, mais normalement cette section est plus détaillée (ce n'est pas important pour l'exercice ici) ! -->
+
+Dans cette étude, nous souhaitons prédire l'âge des ormeaux (du genre *Haliotis*) sur base de mesures morphométriques. Ce carnet de notes se focalise sur la relation entre la masse et la longueur de la coquille de ce mollusque comme analyse préliminaire.
+
+## Résultats
+
+<!--% Importez les données `abalone` générées depuis le script R/import_abalone.R.-->
+
+```{r read}
+abalone <- read(___)
+```
+
+### Description des données
+
+<!--% Réalisez un nuage de points de la variable `whole_weight` en fonction de la variable `length`. -->
+
+```{r plot}
+
+```
+
+<!--% Décrivez le graphique ci-dessus en 2 à 3 phrases.-->
+
+<!--% Utilisez le chunk ci-dessous pour transformez les données, si nécessaire-->
+
+```{r mutate}
+
+```
+
+<!--% Réalisez un tableau qui résume les données.-->
+
+```{r tab}
+
+```
+
+<!--% Décrivez le tableau ci-dessus en 2 à 3 phrases.-->
+
+### Modélisation de la masse totale
+
+<!--% Utilisez la fonction `lm()` pour calculer la régression linéaire demandée. Placez le résultat dans une variable `abalone_lm`. Superposez la droite de régression sur le nuage de point dans un graphique. -->
+
+```{r lm}
+abalone_lm <- ___
+chart(___)
+```
+
+<!--% Écrivez l'équation mathématique de ce modèle (paramétrisation du modèle) en utilisant la syntaxe LaTeX ci-dessous. -->
+
+$$___equation___$$
+
+<!--% Faites un résumé de votre modèle avec la fonction `summary()` appliquée sur votre objet `abalone_lm` et affichez-le grâce à `tabularise()`.-->
+
+```{r summary}
+
+```
+
+<!--% Décrivez le résultat du résumé de l'objet `abalone_lm` en 3 à 4 phrases. Soyez complet ! -->
+
+<!--% Étudiez la distribution des résidus en fonction des valeurs ajustées de votre modèle. -->
+
+```{r resid1}
+
+```
+
+<!--% Décrivez le graphique ci-dessus en 2 à 3 phrases. Soyez complet ! -->
+
+<!--% Vérifiez la Normalité des résidus de votre modèle. -->
+
+```{r resid2}
+
+```
+
+<!--% Décrivez le graphique ci-dessus en 2 à 3 phrases. Soyez complet ! -->
+
+<!--% Générez un graphique qui permet de déterminer l'homoscédasticité des résidus. -->
+
+```{r resid3}
+
+```
+
+<!--% Décrivez le graphique ci-dessus en 2 à 3 phrases. Soyez complet ! -->
+
+<!--% Étudiez l’influence des individus sur la régression linéaire grâce à l'effet de levier (axe X) et à la distance de Cook (axe Y). -->
+
+```{r resid4}
+
+```
+
+<!--% Décrivez le graphique ci-dessus en 2 à 3 phrases. Soyez complet ! -->
+
+## Discussion et conclusion
+
+<!--% Selon vous, est-ce que ce modèle représente correctement vos données. Répondez en 4 à 6 lignes. Énoncez éventuellement des pistes d'amélioration du modèle dans vos conclusions. -->

@@ -25,6 +25,11 @@ df_structure <- function(object, ...) {
 }
 
 digest <- function(object, algo = "md5", ...) {
+  # Remove spec and problems attributes and convert to a data.frame if needed
+  attr(object, "spec") <- NULL
+  attr(object, "problems") <- NULL
+  if (inherits(object, "data.frame"))
+    object <- as.data.frame(object)
   digest::digest(object, algo = algo, ...)
 }
 
@@ -40,15 +45,16 @@ read_res <- function(name, ..., dir = res_dir,
 
 write_res <- function(object, name, ..., dir = res_dir,
     nthreads = parallel::detectCores(logical = FALSE)) {
+  fs::dir_create(dir)
   qs::qsave(object, file = fs::path(dir, name), nthreads = nthreads, ...)
 }
 
 # The main function to put a result in /tests/results
 record_res <- function(object_name = ".Last.value", name = object_name,
-    fun = NULL, ..., dir = res_dir) {
+    fun = NULL, ..., dir = res_dir, env = parent.frame()) {
   file <- fs::path(dir, name)
 
-  data <- get0(object_name)
+  data <- get0(object_name, envir = env)
   if (is.null(data))
     return(invisible(FALSE))
 
@@ -62,22 +68,25 @@ record_res <- function(object_name = ".Last.value", name = object_name,
 # Shortcuts
 RO <- record_res
 
-RN <- function(name, object_name = ".Last.value", fun = NULL, ...)
-  record_res(object = object_name, name = name, fun = fun, ...)
+RN <- function(name, object_name = ".Last.value", fun = NULL, ...,
+    env = parent.frame())
+  record_res(object = object_name, name = name, fun = fun, ..., env = env)
 
 RODFS <- function(object_name = ".Last.value", name = object_name,
-    fun = df_structure, ...)
-  record_res(object_name = object_name, name = name, fun = fun, ...)
+    fun = df_structure, ..., env = parent.frame())
+  record_res(object_name = object_name, name = name, fun = fun, ..., env = env)
 
-RNDFS <- function(name, object_name = ".Last.value", fun = df_structure, ...)
-  record_res(object_name = object_name, name = name, fun = fun, ...)
+RNDFS <- function(name, object_name = ".Last.value", fun = df_structure, ...,
+    env = parent.frame())
+  record_res(object_name = object_name, name = name, fun = fun, ..., env = env)
 
 ROMD5 <- function(object_name = ".Last.value", name = object_name, fun = digest,
-    ...)
-  record_res(object_name = object_name, name = name, fun = fun, ...)
+    ..., env = parent.frame())
+  record_res(object_name = object_name, name = name, fun = fun, ..., env = env)
 
-RNMD5 <- function(name, object_name = ".Last.value", fun = digest, ...)
-  record_res(object_name = object_name, name = name, fun = fun, ...)
+RNMD5 <- function(name, object_name = ".Last.value", fun = digest, ...,
+    env = parent.frame())
+  record_res(object_name = object_name, name = name, fun = fun, ..., env = env)
 
 
 # Set and get references --------------------------------------------------
@@ -100,12 +109,111 @@ read_ref <- function(name, ..., dir = ref_dir,
   qs::qdeserialize(res)
 }
 
+# Get the currently edited file if file == NULL and check it exists and it does
+# not starts with a dot (.)
+# Also compute the filepath for original, solution and last_saved versions
+.check_file <- function(file = NULL) {
+  if (is.null(file)) {
+    if (!rstudioapi::isAvailable())
+      stop("No file provided and not in Rstudio")
+    file <- try(rstudioapi::documentPath(), silent = TRUE)
+    # If I got an error, either there is no document currently edited, or the
+    # document has not been saved yet
+    if (inherits(file, "try-error"))
+      stop("No file provided and no file currently edited, or the edited file is not saved yet.")
+    # Save the document to make sure we have latest version
+    rstudioapi::documentSave()
+  }
+  stopifnot(is.character(file), length(file) == 1, nchar(file) > 0)
+  file <- here::here(file)
+  if (!fs::file_exists(file))
+    stop("File not found")
+  filename <- basename(file)
+  dirname <- dirname(file)
+  if (substring(filename, 1L, 1L) == ".")
+    stop("You indicate a file starting with a dot (.), maining it is probably not a working version")
+  # Compute names for original, solution, and last_saved versions of this file
+  ext <- fs::path_ext(filename)
+  basename <- paste0(".", fs::path_ext_remove(filename))
+  orig_filename <- paste0(basename, "_original.", ext)
+  attr(file, "original") <- fs::path(dirname, orig_filename)
+  solut_filename <- orig_filename <- paste0(basename, "_solution.", ext)
+  attr(file, "solution") <- fs::path(dirname, solut_filename)
+  saved_filename <- orig_filename <- paste0(basename, "_last_saved.", ext)
+  attr(file, "last_saved") <- fs::path(dirname, saved_filename)
+
+  file
+}
+
+save_as_original <- function(file = NULL) {
+  file <- .check_file(file)
+  fs::file_copy(file, attr(file, "original"), overwrite = TRUE)
+}
+
+save_as_solution <- function(file = NULL) {
+  file <- .check_file(file)
+  fs::file_copy(file, attr(file, "solution"), overwrite = TRUE)
+}
+
+switch_to_original <- function(file = NULL, error = TRUE) {
+  file <- .check_file(file)
+  orig_file <- attr(file, "original")
+  if (!fs::file_exists(orig_file)) {
+    if (isTRUE(error)) {
+      stop("There is no original file ", basename(orig_file), " available")
+    } else {# Silently return NULL
+      return(invisible(NULL))
+    }
+  }
+  # Make a backup of current version in last_saved first
+  fs::file_copy(file, attr(file, "last_saved"), overwrite = TRUE)
+  fs::file_copy(orig_file, file, overwrite = TRUE)
+  invisible(orig_file)
+}
+
+switch_to_solution <- function(file = NULL) {
+  file <- .check_file(file)
+  solut_file <- attr(file, "solution")
+  if (!fs::file_exists(solut_file)) {
+    if (isTRUE(error)) {
+      stop("There is no solution file ", basename(solut_file), " available")
+    } else {# Silently return NULL
+      return(invisible(NULL))
+    }
+  }
+  # Make a backup of current version in last_saved first
+  fs::file_copy(file, attr(file, "last_saved"), overwrite = TRUE)
+  fs::file_copy(solut_file, file, overwrite = TRUE)
+  invisible(solut_file)
+}
+
+switch_to_last_saved <- function(file = NULL) {
+  file <- .check_file(file)
+  saved_file <- attr(file, "last_saved")
+  if (!fs::file_exists(saved_file)) {
+    if (isTRUE(error)) {
+      stop("There is no last saved file ", basename(saved_file), " available")
+    } else {# Silently return NULL
+      return(invisible(NULL))
+    }
+  }
+  # We will interchange current and last_saved, be need to temporary rename
+  # last_saved into .tmp
+  tmp_file <- paste0(saved_file, ".tmp")
+  fs::file_copy(saved_file, tmp_file, overwrite = TRUE)
+  fs::file_copy(file, saved_file, overwrite = TRUE)
+  fs::file_copy(tmp_file, file, overwrite = TRUE)
+  fs::file_delete(tmp_file)
+  invisible(last_saved_file)
+}
+
+# Encryption/decryption of solutions require a key
 set_key <- function() {
   # Try first to retrieve it from a file
-  key_file <- here::here("tests/results/key")
+  key_file <- here::here("tests/.key")
   if (fs::file_exists(key_file))
     return(qs::qread(key_file))
-  pass <- rstudioapi::askForPassword()
+  pass <- askpass::askpass("Veuillez entrer le mode de passe :")
   if (is.null(pass)) # User cancelled
     return()
   if (digest::digest(pass) != "cfe7383614aacd5035642bf60d7d1a3e")
@@ -117,46 +225,131 @@ set_key <- function() {
   invisible(key)
 }
 
-make_original <- function(file, dir = ref_dir) {
-  ref_file <- fs::path(dir, file)
-  ref_file <- here::here(ref_file)
-  file <- here::here(file)
-  if (!fs::file_exists(file))
-    stop("File not found")
-  fs::file_copy(file, ref_file, overwrite = TRUE)
+# Make sure all files are original or solution versions, and possibly also
+# remove last_saved. This is typically used to prepare the repository for an
+# assignment, or to switch from originals to solution to verify the tests
+prepare_files <- function(type = "original", remove_last_saved = FALSE,
+    error = TRUE) {
+  if (type != "original" && type != "solution")
+    stop("type must be either original or solution")
+  # Get a list of original/solution files
+  files <- fs::dir_ls(here::here(), all = TRUE, recurse = TRUE,
+    type = "file", regexp = paste0("_", type, "\\.[a-zA-Z0-9]+$"))
+  if (!length(files)) {# There MUST be at least one orig|solut file
+    if (isTRUE(error)) {
+      stop("No ", type, " files found")
+    } else {
+      return(NULL)
+    }
+  }
+
+  prepare_one <- function(file) {
+    dir <- dirname(file)
+    # We need to remove the leading dot and "_original|_solution" in filename
+    orig_filename <- basename(file)
+    reg_exp <- paste0("^\\.(.+)(_", type, ")(\\.[a-zA-Z0-9]+)$")
+    work_filename <- sub(reg_exp, "\\1\\3", orig_filename)
+    # If the filename is not changed, there is a problem with the name !
+    if (work_filename == orig_filename)
+      stop("Cannot match ", type, " and working version for ", orig_filename)
+    work_file <- fs::path(dir, work_filename)
+    # Copy original|solution into working version
+    fs::file_copy(file, work_file, overwrite = TRUE)
+    # Do we also need to eliminate last_saved version, if present?
+    if (isTRUE(remove_last_saved)) {
+      saved_file <- sub(paste0("_", type), "_last_saved", file)
+      if (saved_file != file && fs::file_exists(saved_file))
+        fs::file_delete(saved_file)
+    }
+    file
+  }
+  unlist(purrr::map(files, prepare_one))
 }
 
-read_original <- function(file, dir = ref_dir) {
-  ref_file <- fs::path(dir, file)
-  ref_file <- here::here(ref_file)
-  file <- here::here(file)
-  if (!fs::file_exists(ref_file))
-    stop("Reference file not found")
-  fs::file_copy(ref_file, file, overwrite = TRUE)
-}
-
-make_solution <- function(file, dir = ref_dir, key = NULL) {
-  ref_file <- fs::path(dir, paste0(file, ".solution"))
-  ref_file <- here::here(ref_file)
-  file <- here::here(file)
-  if (!fs::file_exists(file))
-    stop("File not found")
+# For all _solution.xxx files found, encrypt into _solution.xxx.aes
+encrypt_solutions <- function(key = NULL, error = TRUE) {
+  # Get a list of solution files
+  files <- fs::dir_ls(here::here(), all = TRUE, recurse = TRUE,
+    type = "file", regexp = "_solution\\.[a-zA-Z0-9]+$")
+  if (!length(files)) {
+    if (isTRUE(error)) {
+      stop("No solution files found")
+    } else {
+      return(NULL)
+    }
+  }
   if (is.null(key))
     key <- set_key()
-  cyphr::encrypt_file(file, key = cyphr::key_openssl(key), dest = ref_file)
+
+  encrypt_one <- function(file) {
+    dest_file <- paste0(file, ".aes")
+    cyphr::encrypt_file(file, key = cyphr::key_openssl(key), dest = dest_file)
+    # Check that the dest_file is created before removing unencrypted version
+    if (!fs::file_exists(dest_file))
+      stop("problem when encrypting ", file, ", process interrupted")
+    fs::file_delete(file)
+    file
+  }
+  unlist(purrr::map(files, encrypt_one))
 }
 
-read_solution <- function(file, dir = ref_dir, key = NULL) {
-  ref_file <- fs::path(dir, paste0(file, ".solution"))
-  ref_file <- here::here(ref_file)
-  file <- here::here(file)
-  if (!fs::file_exists(ref_file))
-    stop("Reference file not found")
+# For all _solution.xxx.aes files found, decrypt into _solution.xxx
+decrypt_solutions <- function(key = NULL, error = TRUE) {
+  # Get a list of encrypted solution files
+  enc_files <- fs::dir_ls(here::here(), all = TRUE, recurse = TRUE,
+    type = "file", regexp = "_solution\\.[a-zA-Z0-9]+.aes$")
+  if (!length(enc_files)) {
+    if (isTRUE(error)) {
+      stop("No encoded solution files found")
+    } else {
+      return(NULL)
+    }
+  }
   if (is.null(key))
     key <- set_key()
-  cyphr::decrypt_file(ref_file, key = cyphr::key_openssl(key), dest = file)
+
+  decrypt_one <- function(file) {
+    dest_file <- fs::path_ext_remove(file)
+    cyphr::decrypt_file(file, key = cyphr::key_openssl(key), dest = dest_file)
+    # Check that the file is actually created before removing encrypted version
+    if (!fs::file_exists(dest_file))
+      stop("problem when decrypting ", file, ", process interrupted")
+    fs::file_delete(file)
+    file
+  }
+  unlist(purrr::map(enc_files, decrypt_one))
 }
 
+# Make from R
+make_test <- function() {
+  odir <- setwd(here::here("tests"))
+  on.exit(setwd(odir))
+  system("make -s test")
+}
+
+make_clean <- function() {
+  odir <- setwd(here::here("tests"))
+  on.exit(setwd(odir))
+  system("make -s clean")
+}
+
+make_original <- function() {
+  odir <- setwd(here::here("tests"))
+  on.exit(setwd(odir))
+  system("make -s original")
+}
+
+make_solution <- function() {
+  odir <- setwd(here::here("tests"))
+  on.exit(setwd(odir))
+  system("make -s solution")
+}
+
+make_prepare <- function() {
+  odir <- setwd(here::here("tests"))
+  on.exit(setwd(odir))
+  system("make -s prepare")
+}
 
 # Simplified test functions -----------------------------------------------
 
@@ -274,7 +467,7 @@ sddReporter$public_methods$start_test <- function(context, test) {
 }
 
 sddReporter$public_methods$end_test <- function(context, test) {
-  cli::cat_rule()
+  cli::cat_rule(width = 30L)
 }
 
 sddReporter$public_methods$add_result <- function(context, test, result) {
@@ -306,4 +499,38 @@ sddReporter$public_methods$start_file <- function(name) {
   name <- gsub("__", "/", name)
   name <- paste0("\n", cli::symbol$pointer, " ", name)
   self$cat_line(cli::col_cyan(name))
+}
+
+
+# Multiple choice in Quarto documents -------------------------------------
+
+select_answer <- function(x, name = NULL) {
+  ans <- strsplit(x, "\n[", fixed = TRUE)[[1]][-1]
+  # Keep only ckecked answers
+  checked <- grepl("^[xX]\\]", ans)
+  ans <- ans[checked]
+  # Remove check marks
+  ans <- sub("^[xX]\\] ? ?", "", ans)
+  # Print result
+  cat(ans, "", sep = "\n")
+  # Save a digest of the results in a variable in \tests\results
+  # Note: the chunk label is only available on the document
+  # rendering, not when the chunk is executed in the R console!
+  # So, if we rely on it, nothing is saved unless the document is
+  # knitted!
+  if (is.null(name))
+    name <- knitr::opts_current$get('label')
+  if (!is.null(name)) {
+    dir.create(here::here("tests", "results"), showWarnings = FALSE)
+    res <- digest::digest(ans)
+    # In case we are in correction mode, output more info
+    if (getOption("learnitdown.correction", default = FALSE)) {
+      # Second line is 1/0 for each option (checked or not)
+      res <- c(res, paste(as.integer(checked), collapse = " "))
+      # Finally add the whole text
+      res <- c(res, x)
+    }
+    write_res(res, name)
+  }
+  invisible(ans)
 }

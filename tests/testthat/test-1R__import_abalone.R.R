@@ -1,7 +1,7 @@
 # Vérification de R/import_abalone.R
 
 test_that("Étape 1 : importation des données", {
-  expect_true(is_identical_to_ref("abalone1"))
+  expect_true(is_identical_to_ref("abalone"))
   # Le jeu de données téléchargé `abalone` n'est pas conforme à la référence
   # Assurez-vous que le téléchargement s'est fait correctement.
   # Éventuellement, effacer le fichier data/data_raw/abalone_raw.csv et relancez

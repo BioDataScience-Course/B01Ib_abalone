@@ -3,31 +3,55 @@ test :
 
 clean :
 	echo "Nettoyage des résultats et tests..."
-	# Effacement des fichiers du sous-dossier results, sauf README.md
-	find results/ -type f -not -name 'README.md' -delete
-	echo "✔︎ Nettoyage terminé !"
+	rm -rf results
+	echo "✔︎ Nettoyage terminé. Réexécutez les scripts et les rendus Quarto."
 
-reset :
-	echo "Préparation pour la distribution du dépôt..."
+original :
+	echo "Configuration du dépôt avec les fichiers d'origine..."
 	echo "  • Élimination du cache des données..."
 	rm -f ../data/abalone.rds
 	rm -f ../data/data_raw/abalone_raw.csv
 	echo "  • Remplacement des fichiers de travail par les originaux..."
-	Rscript -e "source('tools_tests.R'); read_original('R/import_abalone.R'); read_original('abalone_notebook.qmd')"
-	echo "  • Élimination des version compilées des documents Quarto..."
+	Rscript -e "source('tools_tests.R'); res <- prepare_files(type = 'original')"
+	echo "  • Élimination des versions compilées des documents Quarto..."
 	rm -f ../abalone_notebook.html
 	echo "  • Effacement des objets créés pour les tests..."
-	find results/ -type f -not -name 'README.md' -delete
-	echo "✔︎ Préparation terminée !"
+	rm -rf results
+	echo "✔︎ Documents originaux installés."
 
 solution :
 	echo "Configuration du dépôt avec la solution..."
 	echo "  • Vérification du mot de passe..."
-	if [ ! -e "results/key" ]; then echo "✗ Exécution interrompue : mot de passe introuvable !" && exit 1; fi
+	if [ ! -e ".key" ]; then echo "✗ Exécution interrompue : mot de passe introuvable !" && exit 1; fi
+	echo "  • Décryptage éventuel des fichiers de solution..."
+	Rscript -e "source('tools_tests.R'); res <- decrypt_solutions(error = FALSE)"
 	echo "  • Remplacement des fichiers de travail par les solutions..."
-	Rscript -e "source('tools_tests.R'); read_solution('R/import_abalone.R'); read_solution('abalone_notebook.qmd')"
+	Rscript -e "source('tools_tests.R'); res <- prepare_files(type = 'solution')"
 	echo "  • Élimination des version compilées des documents Quarto..."
 	rm -f ../abalone_notebook.html
 	echo "  • Effacement des objets créés pour les tests..."
-	find results/ -type f -not -name 'README.md' -delete
+	rm -rf results
+	echo "✔︎ Solution installée. Réexécutez les scripts et les rendus Quarto."
+
+prepare :
+	echo "Préparation pour la distribution du dépôt..."
+	echo "  • Vérification du mot de passe..."
+	if [ ! -e ".key" ]; then echo "✗ Exécution interrompue : mot de passe introuvable !" && exit 1; fi
+	echo "  • Élimination du cache des données..."
+	rm -f ../data/abalone.rds
+	rm -f ../data/data_raw/abalone_raw.csv
+	echo "  • Remplacement des fichiers de travail par les originaux..."
+	Rscript -e "source('tools_tests.R'); res <- prepare_files(type = 'original', remove_last_saved = TRUE)"
+	echo "  • Cryptage des fichiers de solution..."
+	Rscript -e "source('tools_tests.R'); res <- encrypt_solutions()"
+	echo "  • Élimination des versions compilées des documents Quarto..."
+	rm -f ../abalone_notebook.html
+	echo "  • Effacement des objets créés pour les tests..."
+	rm -rf results
 	echo "✔︎ Préparation terminée !"
+	# Note: ceci ne fonctionne pas... il faudra encore déterminer la bonne procédure !
+	#echo "Note : pensez à faire un soft reset de la branche de travail :"
+	#echo "git checkout devel; git reset --soft main (ou master, selon)"
+	#echo "ensuite, un commit de tout et un pull-push, enfin"
+	#echo "git checkout main; git merge devel -m \"devel merged\""
+	#echo "puis git branch -d devel; git push --delete origin devel"

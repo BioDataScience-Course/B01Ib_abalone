@@ -17,3 +17,44 @@ test_that("Le bloc-notes est-il compilé en un fichier final HTML ?", {
   # version de votre bloc-notes en cliquant sur le bouton 'Rendu' et vérifiez
   # que la conversion se fait sans erreur. Sinon, corrigez et regénérez le HTML.
 })
+
+test_that("L'interprétation du tableau des corrélation est-elle correcte ?", {
+  #expect_true(...)
+  # TODO: vérification du tableau
+
+  expect_true(is_identical_to_ref("correlation_comment"))
+  # L'interprétation du tableau des corrélations est (partiellement) fausse
+  # Vous devez cochez les phrases qui décrivent le tableau d'un 'x' entre les
+  # crochets [] -> [x]. Ensuite, vous devez recompiler la version HTML du
+  # bloc-notes (bouton 'Rendu') sans erreur pour réactualiser les résultats.
+  # Assurez-vous de bien comprendre ce qui est coché ou pas : vous n'aurez plus
+  # cette aide plus tard dans le travail de groupe ou les interrogations !
+})
+
+test_that("Le graphique masse totale vs longueur est-il correct ?", {
+  #expect_true(...)
+  # TODO: vérification de plot1
+
+  expect_true(is_identical_to_ref("plot1_comment"))
+  # L'interprétation du graphique masse totale vs longueur est (partiellement)
+  # fausse
+  # Vous devez cochez les phrases qui décrivent le graphique d'un 'x' entre les
+  # crochets [] -> [x]. Ensuite, vous devez recompiler la version HTML du
+  # bloc-notes (bouton 'Rendu') sans erreur pour réactualiser les résultats.
+  # Assurez-vous de bien comprendre ce qui est coché ou pas : vous n'aurez plus
+  # cette aide plus tard dans le travail de groupe ou les interrogations !
+})
+
+test_that("Le graphique log(masse totale) vs log(longueur) est-il correct ?", {
+  #expect_true(...)
+  # TODO: vérification de plot2
+
+  expect_true(is_identical_to_ref("plot2_comment"))
+  # L'interprétation du graphique log(masse totale) vs log(longueur) est
+  # (partiellement) fausse
+  # Vous devez cochez les phrases qui décrivent le graphique d'un 'x' entre les
+  # crochets [] -> [x]. Ensuite, vous devez recompiler la version HTML du
+  # bloc-notes (bouton 'Rendu') sans erreur pour réactualiser les résultats.
+  # Assurez-vous de bien comprendre ce qui est coché ou pas : vous n'aurez plus
+  # cette aide plus tard dans le travail de groupe ou les interrogations !
+})

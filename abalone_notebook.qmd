@@ -1,6 +1,6 @@
 ---
-title: "___"
-author: "___"
+title: "Morphométrie d'ormeaux"
+author: "teacher"
 date: "`r Sys.Date()`"
 format:
   html:
@@ -27,30 +27,99 @@ SciViews::R("model", lang = "fr")
 
 <!--# Introduction et but ont été réduits à leur plus simple expression en une seule phrase, mais normalement cette section est plus détaillée (ce n'est pas important pour l'exercice ici) ! -->
 
-Dans cette étude, nous souhaitons prédire l'âge des ormeaux (du genre *Haliotis*) sur base de mesures morphométriques. Ce carnet de notes se focalise sur la relation entre la masse et la longueur de la coquille de ce mollusque comme analyse préliminaire.
+Nous souhaitons prédire l'âge des ormeaux (gastéropodes du genre *Haliotis*) sur base de mesures morphométriques. L'âge est déterminé avec certitude en comptant sous microscope les anneaux de croissance au niveau d'une coupe de la coquille. C'est un travail long et fastidieux et nous nous demandons si l'âge ne peut pas être approximé en utilisant plutôt des données morphométriques.
+
+Cette étude se focalise d'une part sur la relation entre la masse totale de l'animal et la longueur de la coquille comme analyse préliminaire, et ensuite sur la relation entre la masse et l'âge.
 
 ## Résultats
 
 <!--% Importez les données `abalone` générées depuis le script R/import_abalone.R.-->
 
 ```{r read}
-abalone <- read(___)
+abalone <- read("data/abalone.rds")
 ```
 
 ### Description des données
 
-<!--% Réalisez un nuage de points de la variable `whole_weight` en fonction de la variable `length`. -->
+<!--% Étudiez la corrélation entre les variables quantitatives de taille et de masse et sortez-en un tableau formaté avec `tabularise()`. -->
 
-```{r plot}
-
+```{r correlation}
+abalone %>.%
+  select(., length:shell_weight) %>.%
+  correlation(.) %>.%
+  tabularise(.)
 ```
 
-<!--% Décrivez le graphique ci-dessus en 2 à 3 phrases.-->
+<!--% Commentez ce tableau en sélectionnant les phrases ci-dessous. -->
 
-<!--% Utilisez le chunk ci-dessous pour transformez les données, si nécessaire-->
+```{r correlation_comment, output="asis"}
+# Cochez d'un 'x' dans les crochets [] la ou les phrases
+# correctes sans rien modifier d'autre dans ce morceau R
+select_answer(r"-{
+[] -   Les corrélations sont toutes faibles.
+[x] -   Les corrélations sont toutes fortes.
+[] -   Des corrélations fortes et faibles sont observées.
+[x] -   Toutes les variables sont proportionnelles.
+[] -   Toutes les variables sont inversément proportionnelles.
+[] -   Nous observons des proportionnalités directes et inverses.
+[x] -   La plus forte corrélation est entre la longueur et le diamètre.
+[] -   La plus forte corrélation entre variables de taille et de masse concerne la masse sans coquille et la masse totale.
+[x] -   La plus forte corrélation entre variables de taille et de masse concerne la longueur et la masse totale.}-")
+```
 
-```{r mutate}
+<!--% Réalisez un nuage de points de la variable `whole_weight` en fonction de la variable `length`. -->
 
+```{r plot1}
+chart(data = abalone, whole_weight ~ length) +
+  geom_point()
+```
+
+<!--% Décrivez le graphique ci-dessus en cochant les phrases correctes. -->
+
+```{r plot1_comment, output="asis"}
+# Cochez d'un 'x' dans les crochets [] la ou les phrases
+# correctes sans rien modifier d'autre dans ce morceau R
+select_answer(r"-{
+[] -   Plusieurs sous-populations sont visibles.
+[] -   Le nuage de points est linéaire.
+[x] -   Le nuage de points n'est pas linéaire.
+[] -   La variance semble relativement homogène.
+[x] -   La variance augmente avec les valeurs.
+[] -   La variance diminue avec les valeurs.
+[] -   Une valeur extrême est présente.
+[x] -   Plusieurs valeurs extrêmes sont observées.}-")
+```
+
+Dans le cas de données morphométriques, nous pouvons suspecter une relation d'allométrie de type $y = \alpha\ x^{\beta}$ . Une telle relation peut se linéariser par un double logarithme car $\log y = \log \alpha + \log x^{\beta} = \log \alpha + \beta \log x$ qui est une droite.
+
+<!--% Utilisez le chunk ci-dessous pour transformez les données, et en refaire un nouveau graphique. -->
+
+```{r plot2}
+abalone %>.%
+  mutate(.,
+    log_length = labelise(log(length), "log(Longueur de coquille)"),
+    log_weight = labelise(log(whole_weight), "log(Masse totale)"),
+    ) ->
+  abalone
+
+chart(data = abalone, log_weight ~ log_length) +
+  geom_point()
+```
+
+<!--% Décrivez le graphique ci-dessus en cochant les phrases correctes (mettez un 'x' dans les crochets. -->
+
+```{r plot2_comment, output="asis"}
+# Cochez d'un 'x' dans les crochets [] la ou les phrases
+# correctes sans rien modifier d'autre dans ce morceau R
+select_answer(r"-{
+[] -   Plusieurs sous-populations sont visibles.
+[x] -   Le nuage de points est linéaire.
+[] -   Le nuage de points n'est pas linéaire.
+[x] -   La variance semble relativement homogène.
+[] -   La variance augmente avec les valeurs.
+[] -   La variance diminue avec les valeurs.
+[] -   Une valeur extrême est présente.
+[x] -   Plusieurs valeurs extrêmes sont observées.}-")
 ```
 
 <!--% Réalisez un tableau qui résume les données.-->
@@ -59,33 +128,36 @@ abalone <- read(___)
 
 ```
 
-<!--% Décrivez le tableau ci-dessus en 2 à 3 phrases.-->
+<!--% Décrivez le tableau ci-dessus en 2 à 3 phrases. -->
 
 ### Modélisation de la masse totale
 
-<!--% Utilisez la fonction `lm()` pour calculer la régression linéaire demandée. Placez le résultat dans une variable `abalone_lm`. Superposez la droite de régression sur le nuage de point dans un graphique. -->
+<!--% Utilisez la fonction `lm()` pour calculer la régression linéaire la plus judicieuse en fonction de la description de vos données ci-dessus. Placez le résultat dans une variable `abalone_lm`. Superposez la droite de régression sur le nuage de points dans un graphique. -->
 
 ```{r lm}
-abalone_lm <- ___
-chart(___)
+abalone_lm <- lm(data = abalone, log_weight ~ log_length)
+chart(abalone_lm)
 ```
-
-<!--% Écrivez l'équation mathématique de ce modèle (paramétrisation du modèle) en utilisant la syntaxe LaTeX ci-dessous. -->
-
-$$___equation___$$
 
 <!--% Faites un résumé de votre modèle avec la fonction `summary()` appliquée sur votre objet `abalone_lm` et affichez-le grâce à `tabularise()`.-->
 
 ```{r summary}
-
+summary(abalone_lm) %>.%
+  tabularise(.)
 ```
 
-<!--% Décrivez le résultat du résumé de l'objet `abalone_lm` en 3 à 4 phrases. Soyez complet ! -->
+<!--% Décrivez le résultat du résumé de l'objet `abalone_lm` ci-dessous -->
+
+<!--% Extrayez l'équation paramétrée du modèle ci-dessous. -->
+
+$$`r eq__(abalone_lm, use_coefs = TRUE)`$$
+
+### Analyse des résidus
 
 <!--% Étudiez la distribution des résidus en fonction des valeurs ajustées de votre modèle. -->
 
 ```{r resid1}
-
+chart$resfitted(abalone_lm)
 ```
 
 <!--% Décrivez le graphique ci-dessus en 2 à 3 phrases. Soyez complet ! -->
@@ -93,7 +165,7 @@ $$___equation___$$
 <!--% Vérifiez la Normalité des résidus de votre modèle. -->
 
 ```{r resid2}
-
+chart$qqplot(abalone_lm)
 ```
 
 <!--% Décrivez le graphique ci-dessus en 2 à 3 phrases. Soyez complet ! -->
@@ -101,7 +173,7 @@ $$___equation___$$
 <!--% Générez un graphique qui permet de déterminer l'homoscédasticité des résidus. -->
 
 ```{r resid3}
-
+chart$scalelocation(abalone_lm)
 ```
 
 <!--% Décrivez le graphique ci-dessus en 2 à 3 phrases. Soyez complet ! -->
@@ -109,10 +181,21 @@ $$___equation___$$
 <!--% Étudiez l’influence des individus sur la régression linéaire grâce à l'effet de levier (axe X) et à la distance de Cook (axe Y). -->
 
 ```{r resid4}
-
+chart$resleverage(abalone_lm)
 ```
 
 <!--% Décrivez le graphique ci-dessus en 2 à 3 phrases. Soyez complet ! -->
+
+```{r, warning=FALSE}
+abalone_lm2 <- lm(data = abalone, log_weight ~ age)
+summary(abalone_lm2) %>.%
+  tabularise(.)
+chart(abalone_lm2)
+```
+
+```{r}
+chart$residuals(abalone_lm2)
+```
 
 ## Discussion et conclusion
 

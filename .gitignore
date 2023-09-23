@@ -48,7 +48,9 @@ _site/
 
 # Compilation results
 tests/results/
-!/tests/results/README.md
+
+# Key
+tests/.key
 
 # Knitr cache
 *_cache/
