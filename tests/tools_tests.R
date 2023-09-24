@@ -33,6 +33,27 @@ digest <- function(object, algo = "md5", ...) {
   digest::digest(object, algo = algo, ...)
 }
 
+object_attr <- function(object, attrib = "class", ...) {
+  # Only record an attribute of an object
+  attr(object, attrib)
+}
+
+object_part <- function(object, part = "x", ...) {
+  # Only record one or more parts of an object
+  parts <- strsplit(part, ",", fixed = TRUE)[[1]] |> trimws()
+  if (inherits(object, "data.frame"))
+    object <- as.data.frame(object)
+  object[parts]
+}
+
+# Same as object_part() but instead of recording the parts, it produces a str()
+# representation (often much more compact) of the parts
+object_str <- function(object, part = "x", ...) {
+  res <- object_part(object, part = part)
+  str(res, ...) |> utils::capture.output()
+}
+
+
 # Main functions to record results ----------------------------------------
 
 res_dir <- here::here("tests", "results")
@@ -50,10 +71,8 @@ write_res <- function(object, name, ..., dir = res_dir,
 }
 
 # The main function to put a result in /tests/results
-record_res <- function(object_name = ".Last.value", name = object_name,
+record_res <- function(object_name = ".Last.chunk", name = object_name,
     fun = NULL, ..., dir = res_dir, env = parent.frame()) {
-  file <- fs::path(dir, name)
-
   data <- get0(object_name, envir = env)
   if (is.null(data))
     return(invisible(FALSE))
@@ -68,25 +87,55 @@ record_res <- function(object_name = ".Last.value", name = object_name,
 # Shortcuts
 RO <- record_res
 
-RN <- function(name, object_name = ".Last.value", fun = NULL, ...,
+RN <- function(name, object_name = ".Last.chunk", fun = NULL, ...,
     env = parent.frame())
   record_res(object = object_name, name = name, fun = fun, ..., env = env)
 
-RODFS <- function(object_name = ".Last.value", name = object_name,
+RODFS <- function(object_name = ".Last.chunk", name = object_name,
     fun = df_structure, ..., env = parent.frame())
   record_res(object_name = object_name, name = name, fun = fun, ..., env = env)
 
-RNDFS <- function(name, object_name = ".Last.value", fun = df_structure, ...,
+RNDFS <- function(name, object_name = ".Last.chunk", fun = df_structure, ...,
     env = parent.frame())
   record_res(object_name = object_name, name = name, fun = fun, ..., env = env)
 
-ROMD5 <- function(object_name = ".Last.value", name = object_name, fun = digest,
+ROMD5 <- function(object_name = ".Last.chunk", name = object_name, fun = digest,
     ..., env = parent.frame())
   record_res(object_name = object_name, name = name, fun = fun, ..., env = env)
 
-RNMD5 <- function(name, object_name = ".Last.value", fun = digest, ...,
+RNMD5 <- function(name, object_name = ".Last.chunk", fun = digest, ...,
     env = parent.frame())
   record_res(object_name = object_name, name = name, fun = fun, ..., env = env)
+
+ROP <- function(object_name = ".Last.chunk", part = "x", name = object_name,
+    fun = object_part, ..., env = parent.frame())
+  record_res(object_name = object_name, name = name, fun = fun, part = part,
+    ..., env = env)
+
+RNP <- function(name, part = "x", object_name = ".Last.chunk",
+    fun = object_part, ..., env = parent.frame())
+  record_res(object_name = object_name, name = name, fun = fun, part = part,
+    ..., env = env)
+
+ROA <- function(object_name = ".Last.chunk", attrib = "class",
+    name = object_attr, fun = object_part, ..., env = parent.frame())
+  record_res(object_name = object_name, name = name, fun = fun, attrib = attrib,
+    ..., env = env)
+
+RNA <- function(name, attrib = "class", object_name = ".Last.chunk",
+  fun = object_attr, ..., env = parent.frame())
+  record_res(object_name = object_name, name = name, fun = fun, attrib = attrib,
+    ..., env = env)
+
+ROSTR <- function(object_name = ".Last.chunk", part = "x", name = object_name,
+  fun = object_str, ..., env = parent.frame())
+  record_res(object_name = object_name, name = name, fun = fun, part = part,
+    ..., env = env)
+
+RNSTR <- function(name, part = "x", object_name = ".Last.chunk",
+  fun = object_str, ..., env = parent.frame())
+  record_res(object_name = object_name, name = name, fun = fun, part = part,
+    ..., env = env)
 
 
 # Set and get references --------------------------------------------------
@@ -171,7 +220,7 @@ switch_to_original <- function(file = NULL, error = TRUE) {
   invisible(orig_file)
 }
 
-switch_to_solution <- function(file = NULL) {
+switch_to_solution <- function(file = NULL, error = TRUE) {
   file <- .check_file(file)
   solut_file <- attr(file, "solution")
   if (!fs::file_exists(solut_file)) {
@@ -187,7 +236,7 @@ switch_to_solution <- function(file = NULL) {
   invisible(solut_file)
 }
 
-switch_to_last_saved <- function(file = NULL) {
+switch_to_last_saved <- function(file = NULL, error = TRUE) {
   file <- .check_file(file)
   saved_file <- attr(file, "last_saved")
   if (!fs::file_exists(saved_file)) {
@@ -204,7 +253,7 @@ switch_to_last_saved <- function(file = NULL) {
   fs::file_copy(file, saved_file, overwrite = TRUE)
   fs::file_copy(tmp_file, file, overwrite = TRUE)
   fs::file_delete(tmp_file)
-  invisible(last_saved_file)
+  invisible(saved_file)
 }
 
 # Encryption/decryption of solutions require a key
@@ -457,6 +506,26 @@ has_units_any <- function(name, part = NULL) {
   any(res, na.rm = TRUE)
 }
 
+is_display_equation <- function(text, object) {
+  reg_exp <- paste0("`r +eq__\\(", object, "\\)`")
+  grepl(reg_exp, text) |> any()
+}
+
+is_display_param_equation <- function(text, object) {
+  reg_exp <- paste0("`r +eq__\\(", object, ", +use_coefs *= *TRUE[^`]*\\)`")
+  grepl(reg_exp, text) |> any()
+}
+
+is_inline_equation <- function(text, object) {
+  reg_exp <- paste0("`r +eq_\\(", object, "\\)`")
+  grepl(reg_exp, text) |> any()
+}
+
+is_inline_param_equation <- function(text, object) {
+  reg_exp <- paste0("`r +eq_\\(", object, ", +use_coefs *= *TRUE[^`]*\\)`")
+  grepl(reg_exp, text) |> any()
+}
+
 
 # Tests reporter ----------------------------------------------------------
 
@@ -502,8 +571,45 @@ sddReporter$public_methods$start_file <- function(name) {
 }
 
 
-# Multiple choice in Quarto documents -------------------------------------
+# Functions for Quarto and R Markdown documents ---------------------------
 
+# A hook to save the result of evaluations in chunks as .Last.chunk (if printed
+# because things returned invisibly are not recorded)
+knitr::opts_chunk$set(render = function(x, ...){
+  svMisc::assign_temp(".Last.chunk", x, replace.existing = TRUE)
+  knitr::knit_print(x, ...)
+})
+
+# A hook to save results after a code chunk is evaluated
+knitr::knit_hooks$set(record = function(before, options, envir) {
+  if (!before) {
+    fun_name <- options$record
+    fun <- get(fun_name, mode = "function", envir = envir)
+    object <- options$object
+    if (is.null(object)) {
+      # If the function name starts with RN, we use .Last.chunk
+      # otherwise, we use same name as label
+      if (substring(fun_name, 1L, 2L) == "RN") {
+        object <- ".Last.chunk"
+      } else {
+        object <- options$label
+      }
+      cat(fun_name, "('", options$label, "')\n", sep = "")
+    } else {
+      object <- options$object
+      cat(fun_name, "('", object, "', '", options$label, "')\n", sep = "")
+    }
+    arg <- options$arg
+    if (is.null(arg)) {
+      fun(object_name = object, name = options$label, env = envir)
+    } else {# There is an extra argument
+      fun(object_name = object, name = options$label, arg, env = envir)
+    }
+    NULL
+  }
+})
+
+# A simple multiple choice system in a R chunk, compatible with git
 select_answer <- function(x, name = NULL) {
   ans <- strsplit(x, "\n[", fixed = TRUE)[[1]][-1]
   # Keep only ckecked answers

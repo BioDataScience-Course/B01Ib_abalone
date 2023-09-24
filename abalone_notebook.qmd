@@ -1,6 +1,6 @@
 ---
-title: "Morphométrie d'ormeaux"
-author: "teacher"
+title: "___"
+author: "___"
 date: "`r Sys.Date()`"
 format:
   html:
@@ -18,185 +18,364 @@ lang: fr
 <!--% Ajoutez un titre et votre nom dans l'entête YAML.-->
 
 ```{r setup, include=FALSE}
+# This is needed to the SDD test suite, do not use in a "real" project
 if (!"tools:tests" %in% search())
   source(here::here("tests/tools_tests.R"), attach(NULL, name = "tools:tests"))
+
+# Configure SciViews::R environment
 SciViews::R("model", lang = "fr")
 ```
 
 ## Introduction et but
 
-<!--# Introduction et but ont été réduits à leur plus simple expression en une seule phrase, mais normalement cette section est plus détaillée (ce n'est pas important pour l'exercice ici) ! -->
+<!--# Introduction et but ont été réduits à leur plus simple expression, mais normalement cette section est plus détaillée et étaillée de références bibliographiques (ce n'est pas important pour l'exercice ici) ! -->
 
-Nous souhaitons prédire l'âge des ormeaux (gastéropodes du genre *Haliotis*) sur base de mesures morphométriques. L'âge est déterminé avec certitude en comptant sous microscope les anneaux de croissance au niveau d'une coupe de la coquille. C'est un travail long et fastidieux et nous nous demandons si l'âge ne peut pas être approximé en utilisant plutôt des données morphométriques.
+Nous souhaitons prédire l'âge des ormeaux (gastéropodes du genre *Haliotis*) sur base de mesures morphométriques. L'âge est déterminé avec certitude à l'année près en comptant sous microscope les anneaux de croissance au niveau d'une coupe de la coquille. C'est un travail long et fastidieux et nous nous demandons si l'âge ne peut pas être approximé en utilisant plutôt des données morphométriques (tailles, masses).
 
-Cette étude se focalise d'une part sur la relation entre la masse totale de l'animal et la longueur de la coquille comme analyse préliminaire, et ensuite sur la relation entre la masse et l'âge.
+Cette étude se focalise d'une part sur la relation entre la masse totale de l'animal et la longueur de la coquille comme analyse préliminaire pour caractériser l'évolution en masse par rapport à la taille durant la croissance, et ensuite sur la relation entre la masse totale et l'âge dans le but de déterminer ce dernier plus facilement.
+
+## Matériel et méthodes
+
+<!--# Dans un bloc-notes, le matériel et méthodes peut être succinct et renvoyer, par exemple, à un cahier de laboratoire pour les détails, ou à un lien pour des données ouvertes (le DOI est un lien fiable, lorsqu'il existe). Précisez toujours les analyses statistiques et les logiciels utilisés, y compris leurs versions. Attention : RStudio n'est "que" l'éditeur, le logiciel qui fait les calculs est R ! -->
+
+Les données ont été collectées par Warwick Nash *et al* et sont rendues publiques sous licence CC BY 4.0 avec le DOI [10.24432/C55C7W](https://doi.org/10.24432/C55C7W)**.** Les informations, données et métadonnées (dictionnaire des données) sont disponibles à partir du lien.
+
+La régression linéaire simple par les moindres carrés est utilisée pour modéliser les données. L'analyse est réalisée avec la [SciViews Box 2023](https://www.sciviews.org/software/svbox/) dans [Saturn Cloud](https://saturncloud.io) (Linux) avec le [logiciel R](https://www.r-project.org) (`r R.version.string`).
 
 ## Résultats
 
 <!--% Importez les données `abalone` générées depuis le script R/import_abalone.R.-->
 
-```{r read}
-abalone <- read("data/abalone.rds")
+```{r import, record='RODFS', object='abalone'}
+abalone <- read(___)
 ```
 
 ### Description des données
 
 <!--% Étudiez la corrélation entre les variables quantitatives de taille et de masse et sortez-en un tableau formaté avec `tabularise()`. -->
 
-```{r correlation}
+```{r correlation1, record='RNP', arg='col_keys'}
 abalone %>.%
-  select(., length:shell_weight) %>.%
-  correlation(.) %>.%
-  tabularise(.)
+  sselect(___) %>.%
+  ___ %>.%
+  ___
 ```
 
 <!--% Commentez ce tableau en sélectionnant les phrases ci-dessous. -->
 
-```{r correlation_comment, output="asis"}
-# Cochez d'un 'x' dans les crochets [] la ou les phrases
-# correctes sans rien modifier d'autre dans ce morceau R
+<!--# Lorsque vous voyez un chunk avec un `select_answer()` qui présente une série d'items à cocher, vous ne modifiez RIEN dans ce chunk si ce n'est rajouter des coches en forme de 'x' entre les crochets [] en regard des items corrects pour donner ceci: [x] -   item correct. -->
+
+```{r correlation1comment, output="asis"}
 select_answer(r"-{
 [] -   Les corrélations sont toutes faibles.
-[x] -   Les corrélations sont toutes fortes.
+[] -   Les corrélations sont toutes fortes.
 [] -   Des corrélations fortes et faibles sont observées.
-[x] -   Toutes les variables sont proportionnelles.
+[] -   Toutes les variables sont proportionnelles.
 [] -   Toutes les variables sont inversément proportionnelles.
 [] -   Nous observons des proportionnalités directes et inverses.
-[x] -   La plus forte corrélation est entre la longueur et le diamètre.
+[] -   La plus forte corrélation est entre la longueur et le diamètre.
 [] -   La plus forte corrélation entre variables de taille et de masse concerne la masse sans coquille et la masse totale.
-[x] -   La plus forte corrélation entre variables de taille et de masse concerne la longueur et la masse totale.}-")
+[] -   La plus forte corrélation entre variables de taille et de masse concerne la longueur et la masse totale.}-")
 ```
 
-<!--% Réalisez un nuage de points de la variable `whole_weight` en fonction de la variable `length`. -->
+<!--% Réalisez un nuage de points de la variable `whole_weight` en fonction de la variable `length` qui sont les variables de taille et de masse que vous avez décidé de cibler dans votre analyse. -->
 
-```{r plot1}
-chart(data = abalone, whole_weight ~ length) +
-  geom_point()
+```{r chart1, record='RNSTR', arg='mapping,layers'}
+___
 ```
 
 <!--% Décrivez le graphique ci-dessus en cochant les phrases correctes. -->
 
-```{r plot1_comment, output="asis"}
-# Cochez d'un 'x' dans les crochets [] la ou les phrases
-# correctes sans rien modifier d'autre dans ce morceau R
+```{r chart1comment, output="asis"}
 select_answer(r"-{
 [] -   Plusieurs sous-populations sont visibles.
 [] -   Le nuage de points est linéaire.
-[x] -   Le nuage de points n'est pas linéaire.
-[] -   La variance semble relativement homogène.
-[x] -   La variance augmente avec les valeurs.
-[] -   La variance diminue avec les valeurs.
+[] -   Le nuage de points n'est pas linéaire.
+[] -   La variance semble relativement homogène (homoscédasticité).
+[] -   La variance augmente avec les valeurs (hétéroscédasticité).
+[] -   La variance diminue avec les valeurs (hétéroscédasticité).
 [] -   Une valeur extrême est présente.
-[x] -   Plusieurs valeurs extrêmes sont observées.}-")
+[] -   Plusieurs valeurs extrêmes sont observées.}-")
 ```
 
 Dans le cas de données morphométriques, nous pouvons suspecter une relation d'allométrie de type $y = \alpha\ x^{\beta}$ . Une telle relation peut se linéariser par un double logarithme car $\log y = \log \alpha + \log x^{\beta} = \log \alpha + \beta \log x$ qui est une droite.
 
 <!--% Utilisez le chunk ci-dessous pour transformez les données, et en refaire un nouveau graphique. -->
 
-```{r plot2}
+```{r chart2, record='RNSTR', arg='mapping,layers,labels'}
 abalone %>.%
-  mutate(.,
-    log_length = labelise(log(length), "log(Longueur de coquille)"),
-    log_weight = labelise(log(whole_weight), "log(Masse totale)"),
-    ) ->
+  smutate(.,
+    log_length = labelise(___, "log(Longueur de coquille)"),
+    log_weight = labelise(___, "log(Masse totale)")
+  ) ->
   abalone
 
-chart(data = abalone, log_weight ~ log_length) +
-  geom_point()
+___
 ```
 
-<!--% Décrivez le graphique ci-dessus en cochant les phrases correctes (mettez un 'x' dans les crochets. -->
+<!--% Décrivez le graphique ci-dessus en cochant les phrases correctes. -->
 
-```{r plot2_comment, output="asis"}
-# Cochez d'un 'x' dans les crochets [] la ou les phrases
-# correctes sans rien modifier d'autre dans ce morceau R
+```{r chart2comment, output="asis"}
 select_answer(r"-{
 [] -   Plusieurs sous-populations sont visibles.
-[x] -   Le nuage de points est linéaire.
-[] -   Le nuage de points n'est pas linéaire.
-[x] -   La variance semble relativement homogène.
+[] -   Le nuage de points avec variables transformées est linéarisé.
+[] -   Le nuage de points avec variables transformées n'est pas linéarisé.
+[] -   La variance semble relativement homogène, la transformation l'a améliorée (homoscédasticité).
+[] -   La variance semble relativement homogène, la transformation n'a rien changé.
+[] -   La variance semble hétérogène, la transformation l'a empiré (hétéroscédasticité).
+[] -   La variance semble hétérogène, la transformation n'a rien changé.
 [] -   La variance augmente avec les valeurs.
 [] -   La variance diminue avec les valeurs.
 [] -   Une valeur extrême est présente.
-[x] -   Plusieurs valeurs extrêmes sont observées.}-")
+[] -   Plusieurs valeurs extrêmes sont observées.}-")
 ```
 
-<!--% Réalisez un tableau qui résume les données.-->
+#### Résumé des variables d'intérêt
 
-```{r tab}
+<!--% Réalisez un tableau qui résume les trois variables d'intérêt `age`, `log_length` et `log_weight` seulement avec `skimr::skim()`. -->
 
+```{r table, record='RNP', arg='skim_variable'}
+abalone %>.%
+  sselect(., ___) %>.%
+  ___
 ```
 
-<!--% Décrivez le tableau ci-dessus en 2 à 3 phrases. -->
+<!--% Décrivez le tableau ci-dessus en 2 à 3 phrases en remplaçant "…votre interprétation ici…" ci-dessous. Reprenez le nombre d'observations, le nombre de valeurs manquantes et l'étendue (min, max) des variables comme éléments importants à retenir pour la régression linéaire qui sera faite ensuite. -->
 
-### Modélisation de la masse totale
+...votre interprétation ici...
+
+<!--# Le nombre d'observations hors valeurs manquantes permet de déterminer si nous avons assez d'observation à disposition pour l'analyse envisagée. L'étendue des valeurs observées permet de cerner le domaine d'utilisation du modèle (pour rappel, on évite d'extrapoler en dehors de ce domaine). La distribution des observations à l'intérieur de cette plage est à noter (homogène idéalement). -->
+
+### Modélisation de la masse totale en fonction de la longueur
 
 <!--% Utilisez la fonction `lm()` pour calculer la régression linéaire la plus judicieuse en fonction de la description de vos données ci-dessus. Placez le résultat dans une variable `abalone_lm`. Superposez la droite de régression sur le nuage de points dans un graphique. -->
 
-```{r lm}
-abalone_lm <- lm(data = abalone, log_weight ~ log_length)
-chart(abalone_lm)
+```{r lm1, record='ROP', object='abalone_lm', arg='call'}
+abalone_lm <- ___
+chart(___)
 ```
 
 <!--% Faites un résumé de votre modèle avec la fonction `summary()` appliquée sur votre objet `abalone_lm` et affichez-le grâce à `tabularise()`.-->
 
-```{r summary}
-summary(abalone_lm) %>.%
-  tabularise(.)
+```{r lm1summary, record='RNP', arg='col_keys'}
+___
 ```
 
-<!--% Décrivez le résultat du résumé de l'objet `abalone_lm` ci-dessous -->
+<!--% Décrivez le résultat du résumé de l'objet `abalone_lm` et du graphique ci-dessous. -->
 
-<!--% Extrayez l'équation paramétrée du modèle ci-dessous. -->
+```{r lm1comment, output="asis"}
+select_answer(r"-{
+[] -   Le modèle n'est pas bon, il ne décrit que faiblement les données.
+[] -   Le modèle est acceptable, il s'ajuste bien dans les données.
+[] -   Le modèle est excellent, il s'ajuste très bien dans les données.
+[] -   Les paramétres sont estimés avec une faible précision, leurs écarts types sont importants.
+[] -   Les paramètres sont bien estimés, leurs écarts types sont proportionnellement raisonnables.
+[] -  Les estimateurs des paramètres sont précis, les écarts types sont faibles.
+[] -   L'ordonnée à l'origine est significativement différente de zéro au seuil α de 5%.
+[] -   L'ordonnée à l'origine n'est pas significativement différente de zéro au seuil α de 5%.
+[] -   La pente est significativement différente de zéro au seuil α de 5%.
+[] -   La pente n'est pas significativement différente de zéro au seuil α de 5%.
+[] -   Une valeur extrême est observée.
+[] -   Plusieurs valeurs extrêmes sont observées.
+[] -   L'ajustement de la droite mets en évidence une non linéarité du nuage de points.}-")
+```
 
-$$`r eq__(abalone_lm, use_coefs = TRUE)`$$
+<!--# Dans le cas présent, le très grand nombre d'observations facilite l'interprétation... il n'en est malheureusement pas toujours ainsi en biologie ! -->
+
+Le modèle paramétré est le suivant :
+
+<!--% Extrayez l'équation paramétrée du modèle ci-dessous (indice : nous avons appris à le faire dans un learnr et l'équation n'est visible que dans la version compilée HTML, c'est normal). -->
+
+$$___equation paramétrée du modèle ici___$$
+
+Il est valable pour des longueurs de coquille variant de `r fmin(abalone$length)` mm à `r fmax(abalone$length)` mm et pour des masses totales allant de `r fmin(abalone$whole_weight)` g à `r fmax(abalone$whole_weight)` g.
 
 ### Analyse des résidus
 
-<!--% Étudiez la distribution des résidus en fonction des valeurs ajustées de votre modèle. -->
+<!--% Étudiez la distribution des résidus en fonction des valeurs prédites de votre modèle. -->
 
-```{r resid1}
-chart$resfitted(abalone_lm)
+```{r resid1, record='RNP', arg='labels'}
+___
 ```
 
-<!--% Décrivez le graphique ci-dessus en 2 à 3 phrases. Soyez complet ! -->
+<!--% Décrivez ce premier graphique d'analyse des résidus en cochant les phrases correctes. -->
+
+```{r resid1comment, output="asis"}
+select_answer(r"-{
+[] -   L'étendue des résidus est très faible par rapport à l'étendue des valeurs prédites.
+[] -   L'étendue des résidus est relativement faible par rapport à l'étendue des valeurs prédites.
+[] -   L'étendue des résidus est élevée par rapport à l'étendue des valeurs prédites.
+[] -   La linéarité est excellente (ligne bleue).
+[] -   La linéarité est acceptable (ligne bleue).
+[] -   Le nuage de points n'est pas assez linéaire (ligne bleue).
+[] -   Le nuage de points n'est pas linéaire.
+[] -   Une valeur extrême est présente.
+[] -   Plusieurs valeurs extrêmes sont observées.}-")
+```
 
 <!--% Vérifiez la Normalité des résidus de votre modèle. -->
 
-```{r resid2}
-chart$qqplot(abalone_lm)
+```{r resid2, record='RNP', arg='labels'}
+___
 ```
 
-<!--% Décrivez le graphique ci-dessus en 2 à 3 phrases. Soyez complet ! -->
+<!--% Décrivez ce second graphique d'analyse des résidus en cochant les phrases correctes. -->
 
-<!--% Générez un graphique qui permet de déterminer l'homoscédasticité des résidus. -->
-
-```{r resid3}
-chart$scalelocation(abalone_lm)
+```{r resid2comment, output="asis"}
+select_answer(r"-{
+[] -   Les résidus ont une distribution conforme à la Normale.
+[] -   Les résidus n'ont pas une distribution Normale, mais étant donné la robustesse du modèle linéaire par rapport à ce critère, l'écart est jugé encore acceptable.
+[] -   Les résidus n'ont pas une distribution Normale, et la validité du modèle est mise en cause.
+[] -   Les résidus s'écartent de la Normale aux extrémités de manière symétrique, mais dans des proportions acceptables.
+[] -   Les résidus s'écartent de la Normale aux extrémités de manière symétrique, mais inacceptable.
+[] -   Les résidus s'écartent fortement de la Normale aux extrémités de manière symétrique, mais c'est explicable par la présence de valeurs extrêmes.
+[] -   Les résidus s'écartent fortement de la Normale aux extrémités de manière symétrique, et cela est probablement lié à la non linéarité du nuage de points.
+[] -   Les résidus s'écartent dans des proportions inacceptables de manière asymétique à gauche.
+[] -   Les résidus s'écartent dans des proportions acceptables de manière asymétique à gauche.
+[] -   Les résidus s'écartent dans des proportions inacceptables de manière asymétique à droite.
+[] -   Les résidus s'écartent dans des proportions acceptables de manière asymétique à droite.}-")
 ```
 
-<!--% Décrivez le graphique ci-dessus en 2 à 3 phrases. Soyez complet ! -->
+<!--% Générez un graphique qui permet d'étudier l'homoscédasticité des résidus. -->
 
-<!--% Étudiez l’influence des individus sur la régression linéaire grâce à l'effet de levier (axe X) et à la distance de Cook (axe Y). -->
-
-```{r resid4}
-chart$resleverage(abalone_lm)
+```{r resid3, record='RNP', arg='labels'}
+___
 ```
 
-<!--% Décrivez le graphique ci-dessus en 2 à 3 phrases. Soyez complet ! -->
+<!--% Décrivez ce troisième graphique d'analyse des résidus en cochant les phrases correctes. -->
 
-```{r, warning=FALSE}
-abalone_lm2 <- lm(data = abalone, log_weight ~ age)
-summary(abalone_lm2) %>.%
-  tabularise(.)
-chart(abalone_lm2)
+```{r resid3comment, output="asis"}
+select_answer(r"-{
+[] -   L'étalement des résidus est excellent (homoscédasticité).
+[] -   L'étalement des résidus est acceptable (relative homoscédasticité), compte tenu du faible nombre d'observations qui ne permettent pas une analyse précise.
+[] -   L'étalement des résidus est acceptable (relative homoscédasticité), les variations observées ne mettent probablement pas à mal la validité du modèle.
+[] -   L'étalement des résidus montre une forte hétéroscédasticité qui augmente avec les valeurs prédites.
+[] -   L'étalement des résidus montre une forte hétéroscédasticité qui diminue avec les valeurs prédites.
+[] -   L'étalement des résidus montre une forte hétéroscédasticité qui augmente au centre.
+[] -   L'étalement des résidus montre une forte hétéroscédasticité qui augmente au centre, probablement liée à la non linéarité.
+[] -   L'étalement des résidus montre une forte hétéroscédasticité qui augmente aux extrémités.
+[] -   L'étalement des résidus montre une forte hétéroscédasticité qui augmente aux extrémités, probablement liée à la non linéarité.}-")
 ```
 
-```{r}
-chart$residuals(abalone_lm2)
+<!--% Étudiez l’influence des individus sur la régression linéaire grâce à l'effet de levier (axe X) avec les résidus standardisés sur l'axe Y et avec la distance de Cook (tailel des points). -->
+
+```{r resid4, record='RNP', arg='labels'}
+___
 ```
+
+<!--% Décrivez ce troisième graphique d'analyse des résidus en cochant les phrases correctes. -->
+
+```{r resid4comment, output="asis"}
+select_answer(r"-{
+[] -   Aucune observation n'est particulièrement influente, tant au niveau de la distance de Cook que de l'effet de levier.
+[] -   Une observation très influente est observée et la validité du modèle est mise en cause.
+[] -   Une observation influentes est observée, mais la masse de données et leur répartition permet de considérer que la modèle reste fiable malgré tout.
+[] -   Plusieurs observations très influentes sont observées et la validité du modèle est mise en cause.
+[] -   Plusieurs observations influentes sont observées, mais la masse de données et leur répartition permet de considérer que la modèle reste fiable malgré tout.
+[] -   Une observation est influente par effet de levier et distance de Cook simultanément.
+[] -   Plusieurs observations sont influentes par effet de levier et distance de Cook simultanément.
+[] -   Une observation est influente par effet de levier, sans que la distance de Cook ne soit alarmante.
+[] -   Plusieurs observations sont influentes par effet de levier, sans que la distance de Cook ne soit alarmante.
+[] -   Une observation a une distance de Cook importante, mais sans effet de levier marqué.
+[] -   Plusieurs observations ont une distance de Cook importante, mais sans effet de levier marqué.}-")
+```
+
+### Modélisation de la masse en fonction de l'âge
+
+Nous cherchons maintenant à prédire l'âge des ormeaux à l'aide d'une variable morphométrique par régression linéaire simple. Pour choisir la meilleure variable, nous analysons les corrélations comme première approche.
+
+```{r correlation2, record='RNP', arg='col_keys'}
+abalone %>.%
+  sselect(., ___) %>.%
+  ___ %>.%
+  ___
+```
+
+<!--% Commentez ce tableau en sélectionnant les phrases ci-dessous. -->
+
+```{r correlation2comment, output="asis"}
+select_answer(r"-{
+[] -   Les corrélations entre l'âge et les autres variables sont faibles.
+[] -   Les corrélations entre l'âge et les autres variables sont moyennes.
+[] -   Les corrélations entre l'âge et les autres variables sont élevées.
+[] -   Toutes les variables sont proportionnelles.
+[] -   Toutes les variables sont inversément proportionnelles.
+[] -   La variable la plus corrélée à l'âge est la masse totale.
+[] -   La variable la plus corrélée à l'âge est le log(masse).
+[] -   La variable la plus corrélée à l'âge est la longueur de coquille.
+[] -   La variable la plus corrélée à l'âge est le log(longueur).}-")
+```
+
+Voici les résultats de la modélisation du logarithme de la masse totale en fonction de l'âge calculé à l'année près à partir des stries de croissance de la coquille.
+
+<!--# Attention, la corrélation n'est pas un critère absolu pour déterminer les meilleures variables pour une régression car bien d'autre critères peuvent entrer en compte. D'autre part, souvenez-vous du jeu de données 'anscombe' qui démontrait que l'on peut avoir une même corrélation pour des formes très différentes du nuage de points ! C'est toutefois un guide utile comme première approche. -->
+
+<!--% Normalement, vous devrier étudier les graphiques et les transformations éventuelles des données plus à fond avant de choisir les variables de votre modèle, mais cela dépasserait le temps imparti pour cet exercice. Faites donc directement une régression de log_weight par rapport à l'âge dans la variable `abalone_lm2` et directement dans la foulée le graphique de la régression avec `chart()`. -->
+
+```{r lm2, record='ROP', object='abalone_lm2', arg='call'}
+abalone_lm2 <- ___
+chart(___)
+```
+
+<!--% Réalisez le tableau de résumé d'`abalone_lm2`, formaté avec `tabularise()`. -->
+
+```{r lm2summary, warning=FALSE, record='RNP', arg='col_keys'}
+___
+```
+
+<!--% Décrivez le résultat du graphique et du résumé de `abalone_lm2` ci-dessous. -->
+
+```{r lm2comment, output="asis"}
+select_answer(r"-{
+[] -   Le modèle n'est pas bon, il ne décrit que faiblement les données.
+[] -   Le modèle est acceptable, il s'ajuste bien dans les données.
+[] -   Le modèle est excellent, il s'ajuste très bien dans les données.
+[] -   Les paramétres sont estimés avec une faible précision, leurs écarts types sont importants.
+[] -   Les paramètres sont bien estimés, leurs écarts types sont proportionnellement raisonnables.
+[] -  Les estimateurs des paramètres sont précis, les écarts types sont faibles.
+[] -   L'ordonnée à l'origine est significativement différente de zéro au seuil α de 5%.
+[] -   L'ordonnée à l'origine n'est pas significativement différente de zéro au seuil α de 5%.
+[] -   La pente est significativement différente de zéro au seuil α de 5%.
+[] -   La pente n'est pas significativement différente de zéro au seuil α de 5%.
+[] -   Une valeur extrême est observée.
+[] -   Plusieurs valeurs extrêmes sont observées.
+[] -   L'ajustement de la droite mets en évidence une non linéarité du nuage de points.}-")
+```
+
+### Analyse des résidus de la seconde régression
+
+<!--% Effectuez maintenant l'analyse des résidus rapide en utilisant l'instruction qui génère les quatre graphiques les plus importants de cette analyse dans une seule et même figure composite. -->
+
+```{r resid5, record='RNSTR', arg='labels,coordinates,scales'}
+___
+```
+
+<!--% Décrivez ces graphiques d'analyse des résidus en cochant les phrases correctes. -->
+
+```{r resid5comment, output="asis"}
+select_answer(r"-{
+[] -   L'étendue des résidus est acceptable par rapport à l'étendue des valeurs prédites (A).
+[] -   L'étendue des résidus est élevée par rapport à l'étendue des valeurs prédites (A).
+[] -   L'étendue des résidus est trop élevée par rapport à l'étendue des valeurs prédites (A).
+[] -   Le nuage de points est linéaire (A).
+[] -   Le nuage de points montre une légère non linérité, peu gênante pour le modèle (A).
+[] -   Le nuage de points est non linéaire et le validité du modèle est contestée (A).
+[] -   Les résidus ont une distribution Normale (B).
+[] -   Les résidus ont une distribution non Normale, mais l'écart reste acceptable compte tenu de la robustesse de l'analyse par rapport à ce critère (B).
+[] -   Les résidus ont une distribution non Normale et asymétrique, incompatible avec les contraintes de la régression linéaire par les moindres carrés (B).
+[] -   La variance des résidus est homogène (homoscédasticité) (C).
+[] -   La variance des résidus est hétérogène (hétéroscédasticité), mais dans des limites acceptables (C).
+[] -   La variance des résidus est fortement hétérogène (hétéroscédasticité) et incompatible avec les conditions d'utilisation de la régression linéaire par les moindres carrés (C).
+[] -   Une observation très influente est observée et la validité du modèle est mise en cause (D).
+[] -   Une observation influentes est observée, mais la masse de données et leur répartition permet de considérer que la modèle reste fiable malgré tout (D).
+[] -   Plusieurs observations très influentes sont observées et la validité du modèle est mise en cause (D).
+[] -   Plusieurs observations influentes sont observées, mais la masse de données et leur répartition permet de considérer que la modèle reste fiable malgré tout (D).}-")
+```
+
+<!--# À votre avis, pourquoi ne paramétrisons-nous pas ce modèle ici (étape pourtant cruciale de notre modélisation ?) Indiquez la raison dans votre discussion ci-dessous. -->
 
 ## Discussion et conclusion
 
-<!--% Selon vous, est-ce que ce modèle représente correctement vos données. Répondez en 4 à 6 lignes. Énoncez éventuellement des pistes d'amélioration du modèle dans vos conclusions. -->
+<!--% Selon vous, est-ce que ces deux modèles s'ajustent correctement dans vos données. Répondez en 4 à 8 phrases en remplaçant "…votre discussion ici…" juste en-dessous par votre texte. Énoncez éventuellement des pistes d'amélioration du ou des modèles dans vos conclusions. -->
+
+...votre discussion ici...

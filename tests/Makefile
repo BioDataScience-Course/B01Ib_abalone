@@ -46,6 +46,7 @@ prepare :
 	Rscript -e "source('tools_tests.R'); res <- encrypt_solutions()"
 	echo "  • Élimination des versions compilées des documents Quarto..."
 	rm -f ../abalone_notebook.html
+	rm -rf ../abalone_notebook_files
 	echo "  • Effacement des objets créés pour les tests..."
 	rm -rf results
 	echo "✔︎ Préparation terminée !"

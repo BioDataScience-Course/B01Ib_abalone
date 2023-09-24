@@ -1,6 +1,6 @@
 # Jeu de données `abalone`
 #
-# description : https://archive-beta.ics.uci.edu/ml/datasets/abalone
+# description : https://archive.ics.uci.edu/dataset/1/abalone
 # métadonnées : https://archive.ics.uci.edu/ml/machine-learning-databases/abalone/abalone.names
 # données     : https://archive.ics.uci.edu/ml/machine-learning-databases/abalone/abalone.data
 
@@ -26,6 +26,10 @@ abalone <- read$csv(
     "shucked_weight", "viscera_weight", "shell_weight", "rings"),
   cache_file = "data/data_raw/abalone_raw.csv"); ROMD5('abalone')
 
+# Variables quantitatives multipliées par 200 pour établir les valeurs initiales
+abalone <- smutate(abalone, across(length:shell_weight, function(x) x * 200))
+
+# Vue d'ensemble des données
 skimr::skim(abalone)
 
 
@@ -33,39 +37,22 @@ skimr::skim(abalone)
 
 # Calculez la variable `age` (voyez les pages de description du jeu de données
 # pour connaitre la relation entre `ring` et `age`)
-abalone <- smutate(abalone, age = rings + 1.5); ROMD5('abalone', 'abalone2')
+abalone <- smutate(abalone, age = ___); ROMD5('abalone', 'abalone2')
 
 
 # Étape 3 : ajout des labels et des unités --------------------------------
 
 # Inspirez-vous des métadonnées et indiquez les labels et unités pour toutes les
-# variables
+# variables. Utilisez "années" pour l'unité d'âge. Utilisez les abréviations
+# standard du SI pour les autres unités.
 abalone <- labelise(abalone,
   label = list(
-    sex            = "Sexe",
-    length         = "Longueur de coquille",
-    diameter       = "Largeur de coquille",
-    height         = "Épaisseur totale",
-    whole_weight   = "Masse totale",
-    shucked_weight = "Masse des tissus mous",
-    viscera_weight = "Masse des viscères",
-    shell_weight   = "Masse de la coquille",
-    rings          = "Anneaux de croissance",
-    age            = "Age"
+    ___
   ),
   units = list(
-    sex            = NA,
-    length         = "dm",
-    diameter       = "dm",
-    height         = "dm",
-    whole_weight   = "hg",
-    shucked_weight = "hg",
-    viscera_weight = "hg",
-    shell_weight   = "hg",
-    rings          = NA,
-    age            = "années")
+    ___
   ); RODFS('abalone', 'abalone3')
 
-# Sauvegarder la version finale du jeu de données
+# Sauvegarder la version finale du jeu de données et nettoyer l'environnement
 write$rds(abalone, "data/abalone.rds")
 rm(abalone)
