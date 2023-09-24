@@ -1,7 +1,7 @@
 Package: B01Ib_abalone
 Type: Package
 Version: 2.0.0
-Title: Morphm&trie d'ormeaux
+Title: Morphmétrie d'ormeaux
 Description: Projet individuel cadré du module 1 du cours SDD II à l'UMONS
 Authors@R: c(
   person("Guyliann", "Engels", role = "aut",
