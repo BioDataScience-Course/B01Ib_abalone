@@ -15,6 +15,7 @@ original :
 	Rscript -e "source('tools_tests.R'); res <- prepare_files(type = 'original')"
 	echo "  • Élimination des versions compilées des documents Quarto..."
 	rm -f ../abalone_notebook.html
+	rm -rf ../abalone_notebook_files
 	echo "  • Effacement des objets créés pour les tests..."
 	rm -rf results
 	echo "✔︎ Documents originaux installés."
@@ -29,6 +30,7 @@ solution :
 	Rscript -e "source('tools_tests.R'); res <- prepare_files(type = 'solution')"
 	echo "  • Élimination des version compilées des documents Quarto..."
 	rm -f ../abalone_notebook.html
+	rm -rf ../abalone_notebook_files
 	echo "  • Effacement des objets créés pour les tests..."
 	rm -rf results
 	echo "✔︎ Solution installée. Réexécutez les scripts et les rendus Quarto."
