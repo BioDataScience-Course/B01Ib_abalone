@@ -44,14 +44,15 @@ abalone <- smutate(abalone, age = ___); ROMD5('abalone', 'abalone2')
 
 # Inspirez-vous des métadonnées et indiquez les labels et unités pour toutes les
 # variables. Utilisez "années" pour l'unité d'âge. Utilisez les abréviations
-# standard du SI pour les autres unités.
+# standard du SI pour les autres unités (ne convertissez pas les unités, mais
+# utilisez le sigle correct). Si une variable n'a pas d'unité, indiquez var = NA
 abalone <- labelise(abalone,
   label = list(
     ___
   ),
   units = list(
     ___
-  ); RODFS('abalone', 'abalone3')
+  )); RODFS('abalone', 'abalone3')
 
 # Sauvegarder la version finale du jeu de données et nettoyer l'environnement
 write$rds(abalone, "data/abalone.rds")
