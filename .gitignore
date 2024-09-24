@@ -51,6 +51,7 @@ tests/results/
 
 # Key
 tests/.key
+tests/.cnt
 
 # Knitr cache
 *_cache/

@@ -237,7 +237,7 @@ test_that("Chunks 'resid1' & 'resid1comment' : graphique d'analyse des résidus 
 })
 
 test_that("Chunks 'resid2' & 'resid2comment' : graphique d'analyse des résidus #2", {
-  expect_true(is_identical_to_ref("resid2"))
+  expect_true(is_identical_to_ref("resid2", "labels"))
   # Le graphique d'analyse des résidus #2 n'est pas réalisé ou est incorrect
   # Relisez les consignes et vérifiez votre code concernant ce graphique.
 

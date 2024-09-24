@@ -40,7 +40,7 @@ Cette étude se focalise d'une part sur la relation entre la masse totale de l'a
 
 Les données ont été collectées par Warwick Nash *et al* et sont rendues publiques sous licence CC BY 4.0 avec le DOI [10.24432/C55C7W](https://doi.org/10.24432/C55C7W)**.** Les informations, données et métadonnées (dictionnaire des données) sont disponibles à partir du lien.
 
-La régression linéaire simple par les moindres carrés est utilisée pour modéliser les données. L'analyse est réalisée avec la [SciViews Box 2023](https://www.sciviews.org/software/svbox/) dans [Saturn Cloud](https://saturncloud.io) (Linux) avec le [logiciel R](https://www.r-project.org) (`r R.version.string`).
+La régression linéaire simple par les moindres carrés est utilisée pour modéliser les données. L'analyse est réalisée avec la SciViews Box 2024 dans [Saturn Cloud](https://saturncloud.io) (Linux) avec le [logiciel R](https://www.r-project.org) (`r R.version.string`).
 
 ## Résultats
 
@@ -54,7 +54,7 @@ abalone <- read(___)
 
 <!--% Étudiez la corrélation entre les variables quantitatives de taille et de masse et sortez-en un tableau formaté avec `tabularise()`. -->
 
-```{r correlation1, record='RNP', arg='col_keys'}
+```{r correlation1, record='RNP', arg='col_keys', warning=FALSE}
 abalone %>.%
   sselect(___) %>.%
   ___ %>.%
@@ -70,9 +70,11 @@ select_answer(r"-{
 [] -   Les corrélations sont toutes faibles.
 [] -   Les corrélations sont toutes fortes.
 [] -   Des corrélations fortes et faibles sont observées.
+
 [] -   Toutes les variables sont proportionnelles.
-[] -   Toutes les variables sont inversément proportionnelles.
+[] -   Toutes les variables sont inversement proportionnelles.
 [] -   Nous observons des proportionnalités directes et inverses.
+
 [] -   La plus forte corrélation est entre la longueur et le diamètre.
 [] -   La plus forte corrélation entre variables de taille et de masse concerne la masse sans coquille et la masse totale.
 [] -   La plus forte corrélation entre variables de taille et de masse concerne la longueur et la masse totale.}-")
@@ -80,7 +82,7 @@ select_answer(r"-{
 
 <!--% Réalisez un nuage de points de la variable `whole_weight` en fonction de la variable `length` qui sont les variables de taille et de masse que vous avez décidé de cibler dans votre analyse. -->
 
-```{r chart1, record='RNSTR', arg='mapping,layers'}
+```{r chart1, record='RNCS'}
 ___
 ```
 
@@ -91,9 +93,11 @@ select_answer(r"-{
 [] -   Plusieurs sous-populations sont visibles.
 [] -   Le nuage de points est linéaire.
 [] -   Le nuage de points n'est pas linéaire.
+
 [] -   La variance semble relativement homogène (homoscédasticité).
 [] -   La variance augmente avec les valeurs (hétéroscédasticité).
 [] -   La variance diminue avec les valeurs (hétéroscédasticité).
+
 [] -   Une valeur extrême est présente.
 [] -   Plusieurs valeurs extrêmes sont observées.}-")
 ```
@@ -102,7 +106,7 @@ Dans le cas de données morphométriques, nous pouvons suspecter une relation d'
 
 <!--% Utilisez le chunk ci-dessous pour transformez les données, et en refaire un nouveau graphique. -->
 
-```{r chart2, record='RNSTR', arg='mapping,layers,labels'}
+```{r chart2, record='RNCS'}
 abalone %>.%
   smutate(.,
     log_length = labelise(___, "log(Longueur de coquille)"),
@@ -120,12 +124,14 @@ select_answer(r"-{
 [] -   Plusieurs sous-populations sont visibles.
 [] -   Le nuage de points avec variables transformées est linéarisé.
 [] -   Le nuage de points avec variables transformées n'est pas linéarisé.
+
 [] -   La variance semble relativement homogène, la transformation l'a améliorée (homoscédasticité).
 [] -   La variance semble relativement homogène, la transformation n'a rien changé.
 [] -   La variance semble hétérogène, la transformation l'a empiré (hétéroscédasticité).
 [] -   La variance semble hétérogène, la transformation n'a rien changé.
 [] -   La variance augmente avec les valeurs.
 [] -   La variance diminue avec les valeurs.
+
 [] -   Une valeur extrême est présente.
 [] -   Plusieurs valeurs extrêmes sont observées.}-")
 ```
@@ -157,7 +163,7 @@ chart(___)
 
 <!--% Faites un résumé de votre modèle avec la fonction `summary()` appliquée sur votre objet `abalone_lm` et affichez-le grâce à `tabularise()`.-->
 
-```{r lm1summary, record='RNP', arg='col_keys'}
+```{r lm1summary, record='RNP', arg='col_keys', warning=FALSE}
 ___
 ```
 
@@ -168,15 +174,20 @@ select_answer(r"-{
 [] -   Le modèle n'est pas bon, il ne décrit que faiblement les données.
 [] -   Le modèle est acceptable, il s'ajuste bien dans les données.
 [] -   Le modèle est excellent, il s'ajuste très bien dans les données.
+
 [] -   Les paramétres sont estimés avec une faible précision, leurs écarts types sont importants.
 [] -   Les paramètres sont bien estimés, leurs écarts types sont proportionnellement raisonnables.
 [] -  Les estimateurs des paramètres sont précis, les écarts types sont faibles.
+
 [] -   L'ordonnée à l'origine est significativement différente de zéro au seuil α de 5%.
 [] -   L'ordonnée à l'origine n'est pas significativement différente de zéro au seuil α de 5%.
+
 [] -   La pente est significativement différente de zéro au seuil α de 5%.
 [] -   La pente n'est pas significativement différente de zéro au seuil α de 5%.
+
 [] -   Une valeur extrême est observée.
 [] -   Plusieurs valeurs extrêmes sont observées.
+
 [] -   L'ajustement de la droite mets en évidence une non linéarité du nuage de points.}-")
 ```
 
@@ -194,7 +205,7 @@ Il est valable pour des longueurs de coquille variant de `r fmin(abalone$length)
 
 <!--% Étudiez la distribution des résidus en fonction des valeurs prédites de votre modèle. -->
 
-```{r resid1, record='RNP', arg='labels'}
+```{r resid1, record='RNCS'}
 ___
 ```
 
@@ -205,17 +216,19 @@ select_answer(r"-{
 [] -   L'étendue des résidus est très faible par rapport à l'étendue des valeurs prédites.
 [] -   L'étendue des résidus est relativement faible par rapport à l'étendue des valeurs prédites.
 [] -   L'étendue des résidus est élevée par rapport à l'étendue des valeurs prédites.
+
 [] -   La linéarité est excellente (ligne bleue).
 [] -   La linéarité est acceptable (ligne bleue).
 [] -   Le nuage de points n'est pas assez linéaire (ligne bleue).
 [] -   Le nuage de points n'est pas linéaire.
+
 [] -   Une valeur extrême est présente.
 [] -   Plusieurs valeurs extrêmes sont observées.}-")
 ```
 
 <!--% Vérifiez la Normalité des résidus de votre modèle. -->
 
-```{r resid2, record='RNP', arg='labels'}
+```{r resid2, record='RNCS'}
 ___
 ```
 
@@ -226,6 +239,7 @@ select_answer(r"-{
 [] -   Les résidus ont une distribution conforme à la Normale.
 [] -   Les résidus n'ont pas une distribution Normale, mais étant donné la robustesse du modèle linéaire par rapport à ce critère, l'écart est jugé encore acceptable.
 [] -   Les résidus n'ont pas une distribution Normale, et la validité du modèle est mise en cause.
+
 [] -   Les résidus s'écartent de la Normale aux extrémités de manière symétrique, mais dans des proportions acceptables.
 [] -   Les résidus s'écartent de la Normale aux extrémités de manière symétrique, mais inacceptable.
 [] -   Les résidus s'écartent fortement de la Normale aux extrémités de manière symétrique, mais c'est explicable par la présence de valeurs extrêmes.
@@ -238,7 +252,7 @@ select_answer(r"-{
 
 <!--% Générez un graphique qui permet d'étudier l'homoscédasticité des résidus. -->
 
-```{r resid3, record='RNP', arg='labels'}
+```{r resid3, record='RNCS'}
 ___
 ```
 
@@ -272,10 +286,12 @@ select_answer(r"-{
 [] -   Une observation influentes est observée, mais la masse de données et leur répartition permet de considérer que la modèle reste fiable malgré tout.
 [] -   Plusieurs observations très influentes sont observées et la validité du modèle est mise en cause.
 [] -   Plusieurs observations influentes sont observées, mais la masse de données et leur répartition permet de considérer que la modèle reste fiable malgré tout.
+
 [] -   Une observation est influente par effet de levier et distance de Cook simultanément.
 [] -   Plusieurs observations sont influentes par effet de levier et distance de Cook simultanément.
 [] -   Une observation est influente par effet de levier, sans que la distance de Cook ne soit alarmante.
 [] -   Plusieurs observations sont influentes par effet de levier, sans que la distance de Cook ne soit alarmante.
+
 [] -   Une observation a une distance de Cook importante, mais sans effet de levier marqué.
 [] -   Plusieurs observations ont une distance de Cook importante, mais sans effet de levier marqué.}-")
 ```
@@ -284,7 +300,7 @@ select_answer(r"-{
 
 Nous cherchons maintenant à prédire l'âge des ormeaux à l'aide d'une variable morphométrique par régression linéaire simple. Pour choisir la meilleure variable, nous analysons les corrélations comme première approche.
 
-```{r correlation2, record='RNP', arg='col_keys'}
+```{r correlation2, record='RNP', arg='col_keys', warning=FALSE}
 abalone %>.%
   sselect(., ___) %>.%
   ___ %>.%
@@ -298,8 +314,10 @@ select_answer(r"-{
 [] -   Les corrélations entre l'âge et les autres variables sont faibles.
 [] -   Les corrélations entre l'âge et les autres variables sont moyennes.
 [] -   Les corrélations entre l'âge et les autres variables sont élevées.
+
 [] -   Toutes les variables sont proportionnelles.
 [] -   Toutes les variables sont inversément proportionnelles.
+
 [] -   La variable la plus corrélée à l'âge est la masse totale.
 [] -   La variable la plus corrélée à l'âge est le log(masse).
 [] -   La variable la plus corrélée à l'âge est la longueur de coquille.
@@ -319,7 +337,7 @@ chart(___)
 
 <!--% Réalisez le tableau de résumé d'`abalone_lm2`, formaté avec `tabularise()`. -->
 
-```{r lm2summary, warning=FALSE, record='RNP', arg='col_keys'}
+```{r lm2summary, warning=FALSE, record='RNP', arg='col_keys', warning=FALSE}
 ___
 ```
 
@@ -330,15 +348,20 @@ select_answer(r"-{
 [] -   Le modèle n'est pas bon, il ne décrit que faiblement les données.
 [] -   Le modèle est acceptable, il s'ajuste bien dans les données.
 [] -   Le modèle est excellent, il s'ajuste très bien dans les données.
+
 [] -   Les paramétres sont estimés avec une faible précision, leurs écarts types sont importants.
 [] -   Les paramètres sont bien estimés, leurs écarts types sont proportionnellement raisonnables.
 [] -  Les estimateurs des paramètres sont précis, les écarts types sont faibles.
+
 [] -   L'ordonnée à l'origine est significativement différente de zéro au seuil α de 5%.
 [] -   L'ordonnée à l'origine n'est pas significativement différente de zéro au seuil α de 5%.
+
 [] -   La pente est significativement différente de zéro au seuil α de 5%.
 [] -   La pente n'est pas significativement différente de zéro au seuil α de 5%.
+
 [] -   Une valeur extrême est observée.
 [] -   Plusieurs valeurs extrêmes sont observées.
+
 [] -   L'ajustement de la droite mets en évidence une non linéarité du nuage de points.}-")
 ```
 
@@ -346,7 +369,7 @@ select_answer(r"-{
 
 <!--% Effectuez maintenant l'analyse des résidus rapide en utilisant l'instruction qui génère les quatre graphiques les plus importants de cette analyse dans une seule et même figure composite. -->
 
-```{r resid5, record='RNSTR', arg='labels,coordinates,scales'}
+```{r resid5, record='RNCS'}
 ___
 ```
 
@@ -357,15 +380,19 @@ select_answer(r"-{
 [] -   L'étendue des résidus est acceptable par rapport à l'étendue des valeurs prédites (A).
 [] -   L'étendue des résidus est élevée par rapport à l'étendue des valeurs prédites (A).
 [] -   L'étendue des résidus est trop élevée par rapport à l'étendue des valeurs prédites (A).
+
 [] -   Le nuage de points est linéaire (A).
-[] -   Le nuage de points montre une légère non linérité, peu gênante pour le modèle (A).
+[] -   Le nuage de points montre une légère non linéarité, peu gênante pour le modèle (A).
 [] -   Le nuage de points est non linéaire et le validité du modèle est contestée (A).
+
 [] -   Les résidus ont une distribution Normale (B).
 [] -   Les résidus ont une distribution non Normale, mais l'écart reste acceptable compte tenu de la robustesse de l'analyse par rapport à ce critère (B).
 [] -   Les résidus ont une distribution non Normale et asymétrique, incompatible avec les contraintes de la régression linéaire par les moindres carrés (B).
+
 [] -   La variance des résidus est homogène (homoscédasticité) (C).
 [] -   La variance des résidus est hétérogène (hétéroscédasticité), mais dans des limites acceptables (C).
 [] -   La variance des résidus est fortement hétérogène (hétéroscédasticité) et incompatible avec les conditions d'utilisation de la régression linéaire par les moindres carrés (C).
+
 [] -   Une observation très influente est observée et la validité du modèle est mise en cause (D).
 [] -   Une observation influentes est observée, mais la masse de données et leur répartition permet de considérer que la modèle reste fiable malgré tout (D).
 [] -   Plusieurs observations très influentes sont observées et la validité du modèle est mise en cause (D).
