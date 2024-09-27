@@ -1,7 +1,7 @@
 # Functions to test projects
 # Copyright (c) 2023, Philippe Grosjean (phgrosjean@sciviews.org) &
 #   Guyliann Engels (Guyliann.Engels@umons.ac.be)
-# Version 2.0.0
+# Version 2.1.0 (use.data = TRUE/FALSE added for chart() objects)
 
 suppressMessages(library(learnitgrid))
 
@@ -63,10 +63,14 @@ knitr::knit_hooks$set(record = function(before, options, envir) {
 })
 
 # Test ggplot or chart plots using ggcheck
-chart_structure <- function(object, ...) {
+chart_structure <- function(object, arg = "", ...) {
   list(
     n_layers = ggcheck::n_layers(object),
-    data = learnitgrid::digest(ggcheck::get_data(object)),
+    data = if (grepl("no.data", arg, fixed = TRUE)) {
+      NULL # Data not considered, only structure of the plot
+    } else {
+      learnitgrid::digest(ggcheck::get_data(object))
+    },
     labels = ggcheck::get_labels(object),
     geoms = ggcheck::get_geoms(object),
     stats = ggcheck::get_stats(object),
@@ -75,12 +79,12 @@ chart_structure <- function(object, ...) {
   )
 }
 
-ROCS <- function(object_name = ".Last.chunk", name = object_name,
+ROCS <- function(object_name = ".Last.chunk", arg = "", name = object_name,
   fun = chart_structure, ..., env = parent.frame())
   learnitgrid::record_res(object_name = object_name, name = name, fun = fun,
-    ..., env = env)
+    arg = arg, ..., env = env)
 
-RNCS <- function(name, object_name = ".Last.chunk", fun = chart_structure, ...,
-  env = parent.frame())
+RNCS <- function(name, arg = "", object_name = ".Last.chunk", fun = chart_structure,
+  ..., env = parent.frame())
   learnitgrid::record_res(object_name = object_name, name = name, fun = fun,
-    ..., env = env)
+    arg = arg, ..., env = env)
