@@ -82,7 +82,7 @@ select_answer(r"-{
 
 <!--% Réalisez un nuage de points de la variable `whole_weight` en fonction de la variable `length` qui sont les variables de taille et de masse que vous avez décidé de cibler dans votre analyse. -->
 
-```{r chart1, record='RNCS'}
+```{r chart1, record='RNCS', arg='no.data'}
 ___
 ```
 
@@ -106,7 +106,7 @@ Dans le cas de données morphométriques, nous pouvons suspecter une relation d'
 
 <!--% Utilisez le chunk ci-dessous pour transformez les données, et en refaire un nouveau graphique. -->
 
-```{r chart2, record='RNCS'}
+```{r chart2, record='RNCS', arg='no.data'}
 abalone %>.%
   smutate(.,
     log_length = labelise(___, "log(Longueur de coquille)"),
@@ -205,7 +205,7 @@ Il est valable pour des longueurs de coquille variant de `r fmin(abalone$length)
 
 <!--% Étudiez la distribution des résidus en fonction des valeurs prédites de votre modèle. -->
 
-```{r resid1, record='RNCS'}
+```{r resid1, record='RNCS', arg='no.data'}
 ___
 ```
 
@@ -228,7 +228,7 @@ select_answer(r"-{
 
 <!--% Vérifiez la Normalité des résidus de votre modèle. -->
 
-```{r resid2, record='RNCS'}
+```{r resid2, record='RNCS', arg='no.data'}
 ___
 ```
 
@@ -252,7 +252,7 @@ select_answer(r"-{
 
 <!--% Générez un graphique qui permet d'étudier l'homoscédasticité des résidus. -->
 
-```{r resid3, record='RNCS'}
+```{r resid3, record='RNCS', arg='no.data'}
 ___
 ```
 
@@ -273,7 +273,7 @@ select_answer(r"-{
 
 <!--% Étudiez l’influence des individus sur la régression linéaire grâce à l'effet de levier (axe X) avec les résidus standardisés sur l'axe Y et avec la distance de Cook (tailel des points). -->
 
-```{r resid4, record='RNP', arg='labels'}
+```{r resid4, resid4, record='RNCS', arg='no.data'}
 ___
 ```
 
@@ -369,7 +369,7 @@ select_answer(r"-{
 
 <!--% Effectuez maintenant l'analyse des résidus rapide en utilisant l'instruction qui génère les quatre graphiques les plus importants de cette analyse dans une seule et même figure composite. -->
 
-```{r resid5, record='RNCS'}
+```{r resid5, record='RNCS', arg='no.data'}
 ___
 ```
 
