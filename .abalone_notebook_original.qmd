@@ -273,7 +273,7 @@ select_answer(r"-{
 
 <!--% Étudiez l’influence des individus sur la régression linéaire grâce à l'effet de levier (axe X) avec les résidus standardisés sur l'axe Y et avec la distance de Cook (tailel des points). -->
 
-```{r resid4, resid4, record='RNCS', arg='no.data'}
+```{r resid4, record='RNCS', arg='no.data'}
 ___
 ```
 
