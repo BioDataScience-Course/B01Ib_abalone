@@ -296,9 +296,11 @@ select_answer(r"-{
 [] -   Plusieurs observations ont une distance de Cook importante, mais sans effet de levier marqué.}-")
 ```
 
-### Modélisation de la masse en fonction de l'âge
+### Modélisation de la masse ou de la taille en fonction de l'âge
 
-Nous cherchons maintenant à prédire l'âge des ormeaux à l'aide d'une variable morphométrique par régression linéaire simple. Pour choisir la meilleure variable, nous analysons les corrélations comme première approche.
+Nous cherchons maintenant à prédire l'âge des ormeaux à l'aide d'une variable soit de la taille, soit de la masse totale par régression linéaire simple. Pour choisir la meilleure variable, nous analysons les corrélations comme première approche.
+
+<!--% Étudiez la corrélation entre l'âge et les variables de longueur et de masse totale, transformées ou non, et sortez-en un tableau formaté avec `tabularise()`. -->
 
 ```{r correlation2, record='RNP', arg='col_keys', warning=FALSE}
 abalone %>.%

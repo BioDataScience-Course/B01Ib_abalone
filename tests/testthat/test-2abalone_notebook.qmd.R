@@ -24,7 +24,7 @@ test_that("La structure du document est-elle conservée ?", {
   expect_true(all(c("Introduction et but", "Matériel et méthodes",
     "Résultats", "Description des données", "Résumé des variables d'intérêt",
     "Modélisation de la masse totale en fonction de la longueur",
-    "Analyse des résidus", "Modélisation de la masse en fonction de l'âge",
+    "Analyse des résidus", "Modélisation de la masse ou de la taille en fonction de l'âge",
     "Analyse des résidus de la seconde régression", "Discussion et conclusion")
     %in% (rmd_node_sections(aba) |> unlist() |> unique())))
   # Les sections (titres) attendues du document ne sont pas toutes présentes
