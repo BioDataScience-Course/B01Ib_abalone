@@ -1,6 +1,6 @@
 # SDD II module 1 : Morphométrie d'ormeaux
 
-Ce projet nécessite d'avoir assimilé l'ensemble des notions du premier module du cours de Science des Données biologiques 2. Il correspond au dépôt GitHub <https://github.com/BioDataScience-Course/B01Ib_abalone>.
+Ce projet nécessite d'avoir assimilé l'ensemble des notions du [premier module du cours de Science des Données biologiques 2](https://wp.sciviews.org/sdd-umons2/?iframe=wp.sciviews.org/sdd-umons2-2025/lm.html). Il correspond au dépôt GitHub <https://github.com/BioDataScience-Course/B01Ib_abalone>. Il est distribué sous licence [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
 ## Objectifs
 

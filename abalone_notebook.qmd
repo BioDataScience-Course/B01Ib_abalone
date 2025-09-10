@@ -18,9 +18,12 @@ lang: fr
 <!--% Ajoutez un titre et votre nom dans l'entête YAML.-->
 
 ```{r setup, include=FALSE}
-# This is needed to the SDD test suite, do not use in a "real" project
+# Ceci est nécessaire pour les tests SDD, ne pas utiliser dans un "vrai" projet
 if (!"tools:tests" %in% search())
   source(here::here("tests/tools_tests.R"), attach(NULL, name = "tools:tests"))
+
+# Configure Knitr to use AGG as graphic device
+knitr::opts_chunk$set(dev = "ragg_png")
 
 # Configure SciViews::R environment
 SciViews::R("model", lang = "fr")
@@ -40,7 +43,7 @@ Cette étude se focalise d'une part sur la relation entre la masse totale de l'a
 
 Les données ont été collectées par Warwick Nash *et al* et sont rendues publiques sous licence CC BY 4.0 avec le DOI [10.24432/C55C7W](https://doi.org/10.24432/C55C7W)**.** Les informations, données et métadonnées (dictionnaire des données) sont disponibles à partir du lien.
 
-La régression linéaire simple par les moindres carrés est utilisée pour modéliser les données. L'analyse est réalisée avec la SciViews Box 2024 dans [Saturn Cloud](https://saturncloud.io) (Linux) avec le [logiciel R](https://www.r-project.org) (`r R.version.string`).
+La régression linéaire simple par les moindres carrés est utilisée pour modéliser les données. L'analyse est réalisée avec le logiciel R (`r R.version.string`) et en particulier le package {modelit} version `r packageVersion("modelit")` dans la [SciViews Box 2025](https://www.sciviews.org/software/svbox/). [Saturn Cloud](https://saturncloud.io/) (Linux Ubuntu 22.04). Le seuil $\alpha$ de tous les tests est fixé à l'avance à 5%.
 
 ## Résultats
 
@@ -161,7 +164,7 @@ abalone_lm <- ___
 chart(___)
 ```
 
-<!--% Faites un résumé de votre modèle avec la fonction `summary()` appliquée sur votre objet `abalone_lm` et affichez-le grâce à `tabularise()`.-->
+<!--% Faites un résumé de votre modèle avec la fonction `summary_()` (ou summary()) appliquée sur votre objet `abalone_lm` et affichez-le grâce à `tabularise()`.-->
 
 ```{r lm1summary, record='RNP', arg='col_keys', warning=FALSE}
 ___

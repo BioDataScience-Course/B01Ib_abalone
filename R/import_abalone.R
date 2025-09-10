@@ -4,9 +4,12 @@
 # métadonnées : https://archive.ics.uci.edu/ml/machine-learning-databases/abalone/abalone.names
 # données     : https://archive.ics.uci.edu/ml/machine-learning-databases/abalone/abalone.data
 
-# Nécessaire pour les tests (exécutez avant toute chose)
+# Ceci est nécessaire pour les tests SDD, ne pas utiliser dans un "vrai" projet
 if (!"tools:tests" %in% search())
   source(here::here("tests/tools_tests.R"), attach(NULL, name = "tools:tests"))
+
+# Configure Knitr to use AGG as graphic device
+knitr::opts_chunk$set(dev = "ragg_png")
 
 # Configuration de l'environnement
 SciViews::R("model", lang = "fr")
@@ -15,16 +18,16 @@ SciViews::R("model", lang = "fr")
 # Étape 1 : importation des données ---------------------------------------
 
 dir_create("data/data_raw")
-# Remarque : lorsque vous voyez du code comme "; ROMD5('abalone')" à la fin
+# Remarque : lorsque vous voyez du code comme "; RODFS('abalone')" à la fin
 # d'une instruction R "normale", il s'agit de code pour sauvegarder des
 # résultats intermédiaires qui sont utilisés pour les tests. N'Y TOUCHEZ PAS
 # et exécutez la ligne en entier dans R.
 abalone <- read$csv(
   "https://archive.ics.uci.edu/ml/machine-learning-databases/abalone/abalone.data",
-  col_names = c(
+  col.names = c(
     "sex", "length", "diameter", "height", "whole_weight",
     "shucked_weight", "viscera_weight", "shell_weight", "rings"),
-  cache_file = "data/data_raw/abalone_raw.csv"); ROMD5('abalone')
+  cache_file = "data/data_raw/abalone_raw.csv"); RODFS('abalone')
 
 # Variables quantitatives multipliées par 200 pour établir les valeurs initiales
 abalone <- smutate(abalone, across(length:shell_weight, function(x) x * 200))
@@ -37,7 +40,7 @@ skimr::skim(abalone)
 
 # Calculez la variable `age` (voyez les pages de description du jeu de données
 # pour connaitre la relation entre `ring` et `age`)
-abalone <- smutate(abalone, age = ___); ROMD5('abalone', 'abalone2')
+abalone <- smutate(abalone, age = ___); RODFS('abalone', 'abalone2')
 
 
 # Étape 3 : ajout des labels et des unités --------------------------------
