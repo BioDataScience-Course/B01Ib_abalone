@@ -43,7 +43,7 @@ Cette étude se focalise d'une part sur la relation entre la masse totale de l'a
 
 Les données ont été collectées par Warwick Nash *et al* et sont rendues publiques sous licence CC BY 4.0 avec le DOI [10.24432/C55C7W](https://doi.org/10.24432/C55C7W)**.** Les informations, données et métadonnées (dictionnaire des données) sont disponibles à partir du lien.
 
-La régression linéaire simple par les moindres carrés est utilisée pour modéliser les données. L'analyse est réalisée avec le logiciel R (`r R.version.string`) et en particulier le package {modelit} version `r packageVersion("modelit")` dans la [SciViews Box 2025](https://www.sciviews.org/software/svbox/). [Saturn Cloud](https://saturncloud.io/) (Linux Ubuntu 22.04). Le seuil $\alpha$ de tous les tests est fixé à l'avance à 5%.
+La régression linéaire simple par les moindres carrés est utilisée pour modéliser les données. L'analyse est réalisée avec le logiciel R (`r R.version.string`) et en particulier le package {modelit} version `r packageVersion("modelit")` avec la [SciViews Box 2025](https://www.sciviews.org/software/svbox/) dans [Saturn Cloud](https://saturncloud.io/) (Linux Ubuntu 22.04). Le seuil $\alpha$ de tous les tests est fixé à l'avance à 5%.
 
 ## Résultats
 
