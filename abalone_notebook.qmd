@@ -276,7 +276,7 @@ select_answer(r"-{
 
 <!--% Étudiez l’influence des individus sur la régression linéaire grâce à l'effet de levier (axe X) avec les résidus standardisés sur l'axe Y et avec la distance de Cook (tailel des points). -->
 
-```{r resid4, resid4, record='RNCS', arg='no.data'}
+```{r resid4, record='RNCS', arg='no.data'}
 ___
 ```
 
@@ -299,9 +299,11 @@ select_answer(r"-{
 [] -   Plusieurs observations ont une distance de Cook importante, mais sans effet de levier marqué.}-")
 ```
 
-### Modélisation de la masse en fonction de l'âge
+### Modélisation de la masse ou de la taille en fonction de l'âge
 
-Nous cherchons maintenant à prédire l'âge des ormeaux à l'aide d'une variable morphométrique par régression linéaire simple. Pour choisir la meilleure variable, nous analysons les corrélations comme première approche.
+Nous cherchons maintenant à prédire l'âge des ormeaux à l'aide d'une variable soit de la taille, soit de la masse totale par régression linéaire simple. Pour choisir la meilleure variable, nous analysons les corrélations comme première approche.
+
+<!--% Étudiez la corrélation entre l'âge et les variables de longueur et de masse totale, transformées ou non, et sortez-en un tableau formaté avec `tabularise()`. -->
 
 ```{r correlation2, record='RNP', arg='col_keys', warning=FALSE}
 abalone %>.%
