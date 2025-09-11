@@ -4,7 +4,7 @@ Ce projet nécessite d'avoir assimilé l'ensemble des notions du [premier module
 
 ## Objectifs
 
-Ce projet est individuel **court** et **cadré**. Vous devrez :
+Ce projet est individuel, **court** et **cadré**. Vous devrez :
 
 -   visualiser et décrire des données
 -   ajuster et décrire un modèle linéaire simple
@@ -15,9 +15,9 @@ Ce projet est individuel **court** et **cadré**. Vous devrez :
 
 -   Complétez le fichier `R/import_abalone.R` afin d'obtenir le tableau de données à étudier.
 
-Un tableau comprenant les métadonnées est proposé ci-dessous
+Un tableau comprenant les métadonnées correspondantes est repris ci-dessous
 
-| Nom de la variable | Label associé         | Unité  |
+| Nom de la variable | Label.                | Unité  |
 |--------------------|-----------------------|--------|
 | sex                | Sexe                  | NA     |
 | length             | Longueur de coquille  | mm     |

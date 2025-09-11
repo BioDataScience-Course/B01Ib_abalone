@@ -31,7 +31,7 @@ SciViews::R("model", lang = "fr")
 
 ## Introduction et but
 
-<!--# Introduction et but ont été réduits à leur plus simple expression, mais normalement cette section est plus détaillée et étaillée de références bibliographiques (ce n'est pas important pour l'exercice ici) ! -->
+<!--# Introduction et but ont été réduits à leur plus simple expression, mais normalement cette section est plus détaillée et étayée de références bibliographiques (ce n'est pas important pour l'exercice ici) ! -->
 
 Nous souhaitons prédire l'âge des ormeaux (gastéropodes du genre *Haliotis*) sur base de mesures morphométriques. L'âge est déterminé avec certitude à l'année près en comptant sous microscope les anneaux de croissance au niveau d'une coupe de la coquille. C'est un travail long et fastidieux et nous nous demandons si l'âge ne peut pas être approximé en utilisant plutôt des données morphométriques (tailles, masses).
 
@@ -105,9 +105,9 @@ select_answer(r"-{
 [] -   Plusieurs valeurs extrêmes sont observées.}-")
 ```
 
-Dans le cas de données morphométriques, nous pouvons suspecter une relation d'allométrie de type $y = \alpha\ x^{\beta}$ . Une telle relation peut se linéariser par un double logarithme car $\log y = \log \alpha + \log x^{\beta} = \log \alpha + \beta \log x$ qui est une droite.
+Dans le cas de données morphométriques, nous pouvons suspecter une relation d'allométrie de type $y = \alpha\ x^{\beta}$ . Une telle relation peut se linéariser par un double logarithme, car $\log y = \log \alpha + \log x^{\beta} = \log \alpha + \beta \log x$ qui est une droite.
 
-<!--% Utilisez le chunk ci-dessous pour transformez les données, et en refaire un nouveau graphique. -->
+<!--% Utilisez le chunk ci-dessous pour transformer les données, et en refaire un nouveau graphique. -->
 
 ```{r chart2, record='RNCS', arg='no.data'}
 abalone %>.%
@@ -229,7 +229,7 @@ select_answer(r"-{
 [] -   Plusieurs valeurs extrêmes sont observées.}-")
 ```
 
-<!--% Vérifiez la Normalité des résidus de votre modèle. -->
+<!--% Vérifiez la normalité des résidus de votre modèle. -->
 
 ```{r resid2, record='RNCS', arg='no.data'}
 ___
@@ -274,7 +274,7 @@ select_answer(r"-{
 [] -   L'étalement des résidus montre une forte hétéroscédasticité qui augmente aux extrémités, probablement liée à la non linéarité.}-")
 ```
 
-<!--% Étudiez l’influence des individus sur la régression linéaire grâce à l'effet de levier (axe X) avec les résidus standardisés sur l'axe Y et avec la distance de Cook (tailel des points). -->
+<!--% Étudiez l’influence des individus sur la régression linéaire grâce à l'effet de levier (axe X) avec les résidus standardisés sur l'axe Y et avec la distance de Cook (taille des points). -->
 
 ```{r resid4, record='RNCS', arg='no.data'}
 ___
@@ -286,9 +286,9 @@ ___
 select_answer(r"-{
 [] -   Aucune observation n'est particulièrement influente, tant au niveau de la distance de Cook que de l'effet de levier.
 [] -   Une observation très influente est observée et la validité du modèle est mise en cause.
-[] -   Une observation influentes est observée, mais la masse de données et leur répartition permet de considérer que la modèle reste fiable malgré tout.
+[] -   Une observation influente est observée, mais la masse de données et leur répartition permettent de considérer que le modèle reste fiable malgré tout.
 [] -   Plusieurs observations très influentes sont observées et la validité du modèle est mise en cause.
-[] -   Plusieurs observations influentes sont observées, mais la masse de données et leur répartition permet de considérer que la modèle reste fiable malgré tout.
+[] -   Plusieurs observations influentes sont observées, mais la masse de données et leur répartition permettent de considérer que le modèle reste fiable malgré tout.
 
 [] -   Une observation est influente par effet de levier et distance de Cook simultanément.
 [] -   Plusieurs observations sont influentes par effet de levier et distance de Cook simultanément.
@@ -331,9 +331,9 @@ select_answer(r"-{
 
 Voici les résultats de la modélisation du logarithme de la masse totale en fonction de l'âge calculé à l'année près à partir des stries de croissance de la coquille.
 
-<!--# Attention, la corrélation n'est pas un critère absolu pour déterminer les meilleures variables pour une régression car bien d'autre critères peuvent entrer en compte. D'autre part, souvenez-vous du jeu de données 'anscombe' qui démontrait que l'on peut avoir une même corrélation pour des formes très différentes du nuage de points ! C'est toutefois un guide utile comme première approche. -->
+<!--# Attention, la corrélation n'est pas un critère absolu pour déterminer les meilleures variables pour une régression, car bien d'autres critères peuvent entrer en compte. D'autre part, souvenez-vous du jeu de données 'anscombe' qui démontrait que l'on peut avoir une même corrélation pour des formes très différentes du nuage de points ! C'est toutefois un guide utile comme première approche. -->
 
-<!--% Normalement, vous devrier étudier les graphiques et les transformations éventuelles des données plus à fond avant de choisir les variables de votre modèle, mais cela dépasserait le temps imparti pour cet exercice. Faites donc directement une régression de log_weight par rapport à l'âge dans la variable `abalone_lm2` et directement dans la foulée le graphique de la régression avec `chart()`. -->
+<!--% Normalement, vous devriez étudier les graphiques et les transformations éventuelles des données plus à fond avant de choisir les variables de votre modèle, mais cela dépasserait le temps imparti pour cet exercice. Faites donc directement une régression de log_weight par rapport à l'âge dans la variable `abalone_lm2` et directement dans la foulée le graphique de la régression avec `chart()`. -->
 
 ```{r lm2, record='ROP', object='abalone_lm2', arg='call'}
 abalone_lm2 <- ___
@@ -354,7 +354,7 @@ select_answer(r"-{
 [] -   Le modèle est acceptable, il s'ajuste bien dans les données.
 [] -   Le modèle est excellent, il s'ajuste très bien dans les données.
 
-[] -   Les paramétres sont estimés avec une faible précision, leurs écarts types sont importants.
+[] -   Les paramètres sont estimés avec une faible précision, leurs écarts types sont importants.
 [] -   Les paramètres sont bien estimés, leurs écarts types sont proportionnellement raisonnables.
 [] -  Les estimateurs des paramètres sont précis, les écarts types sont faibles.
 
@@ -399,7 +399,7 @@ select_answer(r"-{
 [] -   La variance des résidus est fortement hétérogène (hétéroscédasticité) et incompatible avec les conditions d'utilisation de la régression linéaire par les moindres carrés (C).
 
 [] -   Une observation très influente est observée et la validité du modèle est mise en cause (D).
-[] -   Une observation influentes est observée, mais la masse de données et leur répartition permet de considérer que la modèle reste fiable malgré tout (D).
+[] -   Une observation influente est observée, mais la masse de données et leur répartition permettent de considérer que le modèle reste fiable malgré tout (D).
 [] -   Plusieurs observations très influentes sont observées et la validité du modèle est mise en cause (D).
 [] -   Plusieurs observations influentes sont observées, mais la masse de données et leur répartition permet de considérer que la modèle reste fiable malgré tout (D).}-")
 ```
